@@ -1,0 +1,147 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background-color: #FFFDF2;
+    color: #000000;
+    font-family: "Times New Roman", Times, Georgia, serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Times New Roman", Times, Georgia, serif;
+    font-weight: 700;
+    color: #000000;
+  }
+  h1 { font-size: 2.5rem; line-height: 1.2; }
+  h2 { font-size: 1.875rem; line-height: 1.3; }
+  h3 { font-size: 1.375rem; line-height: 1.4; }
+  input, textarea, select, button {
+    font-family: "Times New Roman", Times, Georgia, serif;
+  }
+}
+
+@layer components {
+  /* Buttons */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 text-sm font-bold
+           transition-all duration-200 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed
+           border-2 border-black;
+  }
+  .btn-primary {
+    @apply btn bg-black text-cream hover:bg-ink-soft active:scale-95;
+    box-shadow: 3px 3px 0 rgba(0,0,0,0.2);
+  }
+  .btn-secondary {
+    @apply btn bg-cream text-black hover:bg-cream-dark active:scale-95;
+    box-shadow: 3px 3px 0 rgba(0,0,0,0.15);
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold
+           text-black hover:bg-black/5 transition-all duration-200 border border-transparent;
+  }
+  .btn-danger {
+    @apply btn bg-red-700 text-white border-red-900 hover:bg-red-800 active:scale-95;
+  }
+  .btn-lg { @apply px-8 py-3.5 text-base; }
+  .btn-sm { @apply px-3 py-1.5 text-xs; }
+
+  /* Cards */
+  .card {
+    @apply bg-white border-2 border-black;
+    box-shadow: 4px 4px 0 #000;
+  }
+  .card-sm {
+    @apply bg-white border border-black;
+    box-shadow: 2px 2px 0 #000;
+  }
+  .card-body { @apply p-6; }
+  .card-header { @apply px-6 py-4 border-b-2 border-black; }
+
+  /* Inputs */
+  .input {
+    @apply w-full border-2 border-black bg-white px-4 py-2.5 text-sm text-black
+           placeholder:text-ink-faint focus:outline-none focus:border-black
+           focus:ring-2 focus:ring-black/10 transition-all;
+  }
+  .input-error { @apply border-red-700 focus:ring-red-700/10; }
+
+  /* Badges */
+  .badge { @apply inline-flex items-center px-2.5 py-0.5 text-xs font-bold border; }
+  .badge-easy { @apply badge border-green-800 bg-green-50 text-green-900; }
+  .badge-moderate { @apply badge border-yellow-800 bg-yellow-50 text-yellow-900; }
+  .badge-hard { @apply badge border-red-800 bg-red-50 text-red-900; }
+
+  /* Code blocks */
+  .code-block {
+    @apply bg-ink text-cream-dark border-2 border-black p-4 font-mono text-sm overflow-x-auto leading-relaxed;
+  }
+
+  /* Sidebar nav */
+  .sidebar-link {
+    @apply flex items-center gap-3 px-4 py-3 text-sm font-semibold text-cream/70
+           hover:text-cream hover:bg-white/10 transition-all duration-150 border-l-2 border-transparent;
+  }
+  .sidebar-link.active {
+    @apply text-cream bg-white/15 border-l-cream;
+  }
+
+  /* Quiz options */
+  .quiz-option {
+    @apply w-full text-left p-4 border-2 border-black/30 bg-white
+           hover:border-black hover:bg-cream transition-all duration-150 cursor-pointer;
+  }
+  .quiz-option.selected { @apply border-black bg-cream; }
+  .quiz-option.correct { @apply border-green-700 bg-green-50; }
+  .quiz-option.incorrect { @apply border-red-700 bg-red-50; }
+
+  /* Section divider */
+  .divider { @apply border-t-2 border-black my-6; }
+}
+
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+  .bg-cream { background-color: #FFFDF2; }
+  .bg-cream-dark { background-color: #F5F3E4; }
+  .border-cream { border-color: #FFFDF2; }
+  .text-cream { color: #FFFDF2; }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #F5F3E4; }
+::-webkit-scrollbar-thumb { background: #000; }
+::-webkit-scrollbar-thumb:hover { background: #333; }
+
+/* Print styles for report download */
+@media print {
+  /* Hide everything that is NOT the report */
+  .no-print,
+  aside,
+  header,
+  nav,
+  footer { display: none !important; }
+
+  body {
+    background: white !important;
+    font-size: 12pt;
+    color: #000 !important;
+  }
+
+  /* Expand main content to full width (sidebar removed) */
+  main { margin-left: 0 !important; padding: 0 !important; }
+  .card { box-shadow: none !important; border: 1px solid #000 !important; page-break-inside: avoid; }
+  .card-sm { box-shadow: none !important; border: 1px solid #000 !important; }
+
+  /* Report-specific print rules */
+  #print-report { width: 100%; }
+  h1 { font-size: 20pt; }
+  h2 { font-size: 15pt; }
+  h3 { font-size: 13pt; }
+
+  @page { margin: 1.5cm; }
+}
