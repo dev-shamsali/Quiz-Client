@@ -3,11 +3,11 @@ import api from '../../services/api';
 
 // ── Section definitions — use durationMinutes everywhere ──────────────────
 export const SECTION_CONFIG = [
-  { id: 'react-next',  label: 'React.js + Next.js',                  categories: ['React.js', 'Next.js'],                               durationMinutes: 1 },
-  { id: 'node',        label: 'Node.js',                              categories: ['Node.js'],                                           durationMinutes: 1 },
-  { id: 'express',     label: 'Express.js',                           categories: ['Express.js'],                                        durationMinutes: 1 },
-  { id: 'mongodb',     label: 'MongoDB',                              categories: ['MongoDB'],                                           durationMinutes: 1 },
-  { id: 'auth-ps-dbg', label: 'Auth + Problem Solving + Debugging',  categories: ['Authentication & Security', 'Problem Solving', 'Debugging'], durationMinutes: 1 },
+  { id: 'react-next',  label: 'React.js + Next.js',                  categories: ['React.js', 'Next.js'],                               durationMinutes: 30 },
+  { id: 'node',        label: 'Node.js',                              categories: ['Node.js'],                                           durationMinutes: 30 },
+  { id: 'express',     label: 'Express.js',                           categories: ['Express.js'],                                        durationMinutes: 30 },
+  { id: 'mongodb',     label: 'MongoDB',                              categories: ['MongoDB'],                                           durationMinutes: 30 },
+  { id: 'auth-ps-dbg', label: 'Auth + Problem Solving + Debugging',  categories: ['Authentication & Security', 'Problem Solving', 'Debugging'], durationMinutes: 60 },
 ];
 
 // Total = 180 min = 10800 seconds (3 hrs)

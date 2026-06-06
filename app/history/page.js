@@ -65,7 +65,7 @@ export default function HistoryPage() {
                     </div>
                   </div>
                   <p className="text-xs text-ink-muted mb-2">
-                    {attempt.correctAnswers}/25 correct · {Math.floor(attempt.timeTaken / 60)}m {attempt.timeTaken % 60}s
+                    {attempt.correctAnswers}/{attempt.totalQuestions || 25} correct · {Math.floor(attempt.timeTaken / 60)}m {attempt.timeTaken % 60}s
                   </p>
                   <div className="flex gap-1.5 text-xs mb-3 flex-wrap">
                     <span className="px-2 py-0.5 border border-green-700 bg-green-50 text-green-800">E:{attempt.breakdown?.easy?.correct}/{attempt.breakdown?.easy?.total}</span>
@@ -110,7 +110,7 @@ export default function HistoryPage() {
                       </td>
                       <td className="px-5 py-4">
                         <span className="font-black text-lg">{attempt.percentage}%</span>
-                        <span className="text-ink-faint text-xs ml-1">({attempt.correctAnswers}/25)</span>
+                        <span className="text-ink-faint text-xs ml-1">({attempt.correctAnswers}/{attempt.totalQuestions || 25})</span>
                       </td>
                       <td className="px-5 py-4">
                         <span className={`badge border ${gradeStyle[attempt.grade] || 'border-gray-400 text-gray-600'}`}>{attempt.grade}</span>

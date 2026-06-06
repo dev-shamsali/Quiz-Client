@@ -254,18 +254,7 @@ export default function QuizPage() {
     });
   };
 
-  const handlePrev = () => {
-    if (currentIndex > 0) {
-      const prevQ = questions[currentIndex - 1];
-      if (prevQ._sectionIndex !== currentSectionIndex) {
-        if (isSectionCompleted(prevQ._sectionIndex)) {
-          toast.error("You cannot go back to a completed section!");
-          return;
-        }
-      }
-      dispatch(prevQuestion());
-    }
-  };
+
 
   // Update ref immediately inside setter — no stale reads ever
   const handleDescriptionChange = useCallback((questionId, val) => {
@@ -308,6 +297,21 @@ export default function QuizPage() {
     });
   }, [questions, answers, descriptions]);
 
+  const isQuestionLocked = useCallback((idx) => {
+    if (idx < 0 || idx >= questions.length) return true;
+    const q = questions[idx];
+    const secIdx = q._sectionIndex ?? 0;
+    if (secIdx > unlockedUpTo) return true;
+    if (secIdx < unlockedUpTo) {
+      const qId = toIdString(q._id);
+      const done = q.category === 'Problem Solving'
+        ? !!(descriptions[qId] || '').trim()
+        : !!answers[qId];
+      return done;
+    }
+    return false;
+  }, [questions, unlockedUpTo, answers, descriptions]);
+
   const isLastInSection = (() => {
     const nextQ = questions[currentIndex + 1];
     return !nextQ || nextQ._sectionIndex !== currentSectionIndex;
@@ -346,7 +350,7 @@ export default function QuizPage() {
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold mb-3">Ready to Begin?</h1>
             <p className="text-ink-muted mb-6 leading-relaxed max-w-md mx-auto">
-              25 randomised questions across 5 timed sections — 3 hours total.
+              300 randomised questions across 5 timed sections — 3 hours total.
               Each section unlocks when the previous timer expires or when you complete it early.
             </p>
             <div className="mb-6 text-left border border-ink/10 divide-y divide-ink/10">
@@ -373,7 +377,7 @@ export default function QuizPage() {
             </div>
 
             <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-6 sm:mb-8">
-              {[['⏱', '3 Hours', 'Total Time'], ['📝', '25 Q', 'Questions'], ['🔒', 'Strict', 'Proctored']].map(([e, v, l]) => (
+              {[['⏱', '3 Hours', 'Total Time'], ['📝', '300 Q', 'Questions'], ['🔒', 'Strict', 'Proctored']].map(([e, v, l]) => (
                 <div key={l} className="card-sm p-3 sm:p-5 text-center">
                   <div className="text-2xl mb-2">{e}</div>
                   <p className="font-black">{v}</p>
@@ -560,7 +564,7 @@ export default function QuizPage() {
         </AnimatePresence>
 
         <div className="flex items-center justify-between mb-4">
-          <button onClick={handlePrev} disabled={currentIndex === 0} className="btn-secondary">
+          <button onClick={() => dispatch(prevQuestion())} disabled={currentIndex === 0 || isQuestionLocked(currentIndex - 1)} className="btn-secondary">
             <ChevronLeft size={14} /> Prev
           </button>
           <span className="text-sm text-ink-muted">{answeredCount}/{questions.length} answered</span>
@@ -587,7 +591,7 @@ export default function QuizPage() {
               Next Section <ChevronRight size={14} />
             </button>
           ) : (
-            <button onClick={() => dispatch(nextQuestion())} className="btn-primary">
+            <button onClick={() => dispatch(nextQuestion())} disabled={isQuestionLocked(currentIndex + 1)} className="btn-primary">
               Next <ChevronRight size={14} />
             </button>
           )}
@@ -598,7 +602,7 @@ export default function QuizPage() {
           <div className="flex flex-wrap gap-1.5 mb-4">
             {SECTION_CONFIG.map((sec, i) => {
               const col = SECTION_COLORS[i];
-              const locked = i > unlockedUpTo || (i < currentSectionIndex && isSectionCompleted(i));
+              const locked = i !== currentSectionIndex;
               const isActive = i === currentSectionIndex;
               return (
                 <button key={sec.id}
@@ -623,7 +627,7 @@ export default function QuizPage() {
             {questions.map((q, i) => {
               const secIdx = q._sectionIndex ?? 0;
               const col = SECTION_COLORS[secIdx];
-              const locked = secIdx > unlockedUpTo || (secIdx < currentSectionIndex && isSectionCompleted(secIdx));
+              const locked = isQuestionLocked(i);
               const qIdStr = toIdString(q._id);
               const isPS = q.category === 'Problem Solving';
               const done = isPS

@@ -184,7 +184,7 @@ export default function DashboardPage() {
             <BookOpen size={15} />
             <h2 className="font-bold">{settings?.syllabusTitle || 'Assessment Syllabus'}</h2>
             <span className="ml-auto text-xs text-ink-muted font-normal hidden sm:inline">
-              25 Questions · MERN Stack · 8 Categories · 5 Sections
+              300 Questions · MERN Stack · 8 Categories · 5 Sections
             </span>
           </div>
 
@@ -235,7 +235,6 @@ export default function DashboardPage() {
 
           <div className="px-6 py-3 border-t border-ink/10 bg-cream-dark">
             <p className="text-xs text-ink-muted">
-              Distribution: <strong>13 Easy</strong> · <strong>7 Moderate</strong> · <strong>5 Hard</strong> —
               Questions are randomised and unique per student · Timer resets per section
             </p>
           </div>
