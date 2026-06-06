@@ -16,7 +16,7 @@ export default function QuizLayout({ children, showHeader = true }) {
   return (
     <div className="min-h-screen bg-cream flex flex-col">
       {showHeader && (
-        <header className="bg-ink text-cream px-6 h-16 flex items-center justify-between no-print border-b-2 border-ink flex-shrink-0">
+        <header className="sticky top-0 z-50 bg-ink text-cream px-6 h-16 flex items-center justify-between no-print border-b-2 border-ink flex-shrink-0">
           <Link href="/" className="flex items-center gap-3">
             <div className="w-8 h-8 bg-cream flex items-center justify-center font-black text-lg text-ink">A</div>
             <div>
