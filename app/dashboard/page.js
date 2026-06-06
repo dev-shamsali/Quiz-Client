@@ -13,50 +13,67 @@ const SYLLABUS = [
     category: 'React.js',
     color: 'border-blue-700 bg-blue-50 text-blue-900',
     dot: 'bg-blue-700',
+    sectionLabel: 'Section 1 — React.js + Next.js · 30 min',
     topics: ['JSX & Virtual DOM', 'Hooks (useState, useEffect, useRef, useMemo, useCallback)', 'Component Lifecycle', 'Props & State Management', 'Context API', 'React Router', 'Performance Optimisation', 'Error Boundaries', 'Code Splitting & Lazy Loading'],
   },
   {
     category: 'Next.js',
     color: 'border-gray-700 bg-gray-50 text-gray-900',
     dot: 'bg-gray-700',
+    sectionLabel: 'Section 1 — React.js + Next.js · 30 min',
     topics: ['App Router & Pages Router', 'Server & Client Components', 'Static Generation (SSG)', 'Server-Side Rendering (SSR)', 'Incremental Static Regeneration (ISR)', 'API Routes', 'Middleware & Edge Functions', 'Image Optimisation', 'Metadata & SEO'],
   },
   {
     category: 'Node.js',
     color: 'border-green-700 bg-green-50 text-green-900',
     dot: 'bg-green-700',
+    sectionLabel: 'Section 2 — Node.js · 30 min',
     topics: ['Event Loop & Non-blocking I/O', 'Modules (CommonJS & ESM)', 'File System (fs module)', 'Streams & Buffers', 'Async/Await & Promises', 'Child Processes & Worker Threads', 'Cluster & Scaling', 'npm & package.json', 'Environment Variables'],
   },
   {
     category: 'Express.js',
     color: 'border-yellow-700 bg-yellow-50 text-yellow-900',
     dot: 'bg-yellow-700',
+    sectionLabel: 'Section 3 — Express.js · 30 min',
     topics: ['Routing & Route Parameters', 'Middleware Pipeline', 'Request & Response Handling', 'Error Handling Middleware', 'REST API Design', 'CORS Configuration', 'API Versioning', 'Rate Limiting', 'Request Validation'],
   },
   {
     category: 'MongoDB',
     color: 'border-emerald-700 bg-emerald-50 text-emerald-900',
     dot: 'bg-emerald-700',
+    sectionLabel: 'Section 4 — MongoDB · 30 min',
     topics: ['CRUD Operations', 'Mongoose Schemas & Models', 'Aggregation Pipeline', 'Indexing & Performance', 'Schema Design Patterns', 'Relationships & Populate', 'Transactions', 'Replica Sets', 'Atlas & Cloud Deployment'],
   },
   {
     category: 'Authentication & Security',
     color: 'border-red-700 bg-red-50 text-red-900',
     dot: 'bg-red-700',
+    sectionLabel: 'Section 5 — Auth + Problem Solving + Debugging · 60 min',
     topics: ['JWT (Access & Refresh Tokens)', 'bcrypt Password Hashing', 'OAuth 2.0 & PKCE', 'Cookie Security (httpOnly, SameSite)', 'RBAC (Role-Based Access Control)', 'CSRF & XSS Prevention', 'NoSQL Injection Protection', 'Rate Limiting', 'HTTPS & Secure Headers'],
   },
   {
     category: 'Problem Solving',
     color: 'border-purple-700 bg-purple-50 text-purple-900',
     dot: 'bg-purple-700',
+    sectionLabel: 'Section 5 — Auth + Problem Solving + Debugging · 60 min',
     topics: ['Array & Object Manipulation', 'Recursion & Memoization', 'Closures & Scope', 'Prototype Chain', 'Event Delegation', 'Debounce & Throttle', 'Sorting & Searching Algorithms', 'Data Structures (Linked List, Tree)', 'Time & Space Complexity'],
   },
   {
     category: 'Debugging',
     color: 'border-orange-700 bg-orange-50 text-orange-900',
     dot: 'bg-orange-700',
+    sectionLabel: 'Section 5 — Auth + Problem Solving + Debugging · 60 min',
     topics: ['React Error Boundaries & Hydration Issues', 'Node.js Memory Leak Detection', 'Express Hanging Requests', 'MongoDB Slow Query Analysis', 'CORS Troubleshooting', 'JWT & Auth Debugging', 'Browser DevTools', 'Network & API Debugging', 'Race Conditions & Async Bugs'],
   },
+];
+
+// Section summary cards shown above the syllabus
+const SECTION_SUMMARY = [
+  { label: 'React.js + Next.js',                  duration: '30 min', color: 'border-blue-700 bg-blue-50 text-blue-900',      dot: 'bg-blue-700'   },
+  { label: 'Node.js',                              duration: '30 min', color: 'border-green-700 bg-green-50 text-green-900',   dot: 'bg-green-700'  },
+  { label: 'Express.js',                           duration: '30 min', color: 'border-yellow-700 bg-yellow-50 text-yellow-900', dot: 'bg-yellow-700' },
+  { label: 'MongoDB',                              duration: '30 min', color: 'border-emerald-700 bg-emerald-50 text-emerald-900', dot: 'bg-emerald-700' },
+  { label: 'Auth + Problem Solving + Debugging',   duration: '60 min', color: 'border-purple-700 bg-purple-50 text-purple-900', dot: 'bg-purple-700' },
 ];
 
 const gradeStyle = {
@@ -81,7 +98,7 @@ export default function DashboardPage() {
 
   const [expanded, setExpanded] = useState(null);
   const quizDateTime = settings?.quizDateTime ? new Date(settings.quizDateTime) : null;
-  const quizOpen = settings?.quizAllowed;
+  const quizOpen     = settings?.quizAllowed;
 
   return (
     <DashboardLayout>
@@ -95,9 +112,9 @@ export default function DashboardPage() {
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
           className="grid grid-cols-3 gap-2 sm:gap-4 mb-6 sm:mb-8">
           {[
-            { icon: Target, label: 'Total Attempts', value: user?.totalAttempts ?? 0 },
-            { icon: Award, label: 'Average Score', value: `${user?.averageScore ?? 0}%` },
-            { icon: Clock, label: 'Last Attempt', value: attempts[0] ? new Date(attempts[0].createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : '—' },
+            { icon: Target, label: 'Total Attempts',  value: user?.totalAttempts ?? 0 },
+            { icon: Award,  label: 'Average Score',   value: `${user?.averageScore ?? 0}%` },
+            { icon: Clock,  label: 'Last Attempt',    value: attempts[0] ? new Date(attempts[0].createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : '—' },
           ].map(({ icon: Icon, label, value }) => (
             <div key={label} className="card-sm p-3 sm:p-5">
               <Icon size={14} className="mb-2 sm:mb-3 text-ink-light" />
@@ -115,25 +132,48 @@ export default function DashboardPage() {
             <div>
               <p className="text-xs text-ink-light uppercase tracking-widest mb-0.5">Quiz Schedule</p>
               {quizDateTime ? (
-                <p className="font-bold text-sm">{quizDateTime.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' })} · {quizDateTime.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}</p>
+                <p className="font-bold text-sm">
+                  {quizDateTime.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' })}
+                  {' · '}
+                  {quizDateTime.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
+                </p>
               ) : (
                 <p className="text-sm text-ink-faint italic">No date scheduled yet</p>
               )}
             </div>
           </div>
           <div className="flex items-center gap-3 sm:flex-shrink-0">
-            <div className={`flex items-center gap-1.5 px-3 py-1.5 border text-xs font-bold uppercase tracking-widest ${quizOpen ? 'border-green-700 bg-green-50 text-green-800' : 'border-black/20 bg-cream-dark text-ink-light'}`}>
+            <div className={`flex items-center gap-1.5 px-3 py-1.5 border text-xs font-bold uppercase tracking-widest
+              ${quizOpen ? 'border-green-700 bg-green-50 text-green-800' : 'border-black/20 bg-cream-dark text-ink-light'}`}>
               {quizOpen ? <CheckCircle size={11} /> : <XCircle size={11} />}
               {quizOpen ? 'Open' : 'Closed'}
             </div>
-            {settings?.quizDuration && (
-              <span className="text-xs text-ink-muted border border-ink/20 px-2 py-1">{settings.quizDuration} min</span>
-            )}
+            {/* Always show 3 hrs / 180 min for the new section-based quiz */}
+            <span className="text-xs text-ink-muted border border-ink/20 px-2 py-1">3 hrs · 5 sections</span>
             {quizOpen ? (
               <Link href="/quiz" className="btn-primary py-2 px-5 text-sm">Start Quiz</Link>
             ) : (
               <button disabled className="btn-secondary py-2 px-5 text-sm opacity-50 cursor-not-allowed">Awaiting Admin</button>
             )}
+          </div>
+        </motion.div>
+
+        {/* Section breakdown cards */}
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18 }}
+          className="mb-6">
+          <p className="text-xs font-bold uppercase tracking-widest text-ink-light mb-3">Quiz Sections</p>
+          <div className="grid grid-cols-1 sm:grid-cols-5 gap-2">
+            {SECTION_SUMMARY.map((sec, i) => (
+              <div key={sec.label}
+                className={`border-2 px-3 py-2.5 ${sec.color}`}>
+                <div className="flex items-center gap-1.5 mb-1">
+                  <span className={`w-2 h-2 rounded-full flex-shrink-0 ${sec.dot}`} />
+                  <span className="text-xs font-bold uppercase tracking-widest opacity-60">S{i + 1}</span>
+                </div>
+                <p className="text-xs font-bold leading-snug mb-1">{sec.label}</p>
+                <p className="text-xs opacity-70 font-mono">{sec.duration}</p>
+              </div>
+            ))}
           </div>
         </motion.div>
 
@@ -143,13 +183,17 @@ export default function DashboardPage() {
           <div className="card-header flex items-center gap-2 flex-wrap">
             <BookOpen size={15} />
             <h2 className="font-bold">{settings?.syllabusTitle || 'Assessment Syllabus'}</h2>
-            <span className="ml-auto text-xs text-ink-muted font-normal hidden sm:inline">25 Questions · MERN Stack · 8 Categories</span>
+            <span className="ml-auto text-xs text-ink-muted font-normal hidden sm:inline">
+              25 Questions · MERN Stack · 8 Categories · 5 Sections
+            </span>
           </div>
+
           {settings?.syllabusContent && (
             <div className="px-6 pt-4 pb-2 text-sm text-ink-muted leading-relaxed border-b border-ink/10 whitespace-pre-line">
               {settings.syllabusContent}
             </div>
           )}
+
           <div className="divide-y divide-ink/10">
             {SYLLABUS.map((item, idx) => (
               <div key={item.category}>
@@ -158,8 +202,10 @@ export default function DashboardPage() {
                   className="w-full flex items-center gap-3 px-6 py-4 hover:bg-cream-dark transition-colors text-left">
                   <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${item.dot}`} />
                   <span className="font-bold text-sm flex-1">{item.category}</span>
-                  <span className="text-xs text-ink-muted mr-2">{item.topics.length} topics</span>
-                  <ChevronDown size={14} className={`text-ink-light transition-transform duration-200 ${expanded === idx ? 'rotate-180' : ''}`} />
+                  <span className="text-xs text-ink-muted mr-2 hidden sm:inline">{item.sectionLabel}</span>
+                  <span className="text-xs text-ink-muted mr-2 sm:hidden">{item.topics.length} topics</span>
+                  <ChevronDown size={14}
+                    className={`text-ink-light transition-transform duration-200 ${expanded === idx ? 'rotate-180' : ''}`} />
                 </button>
                 <AnimatePresence>
                   {expanded === idx && (
@@ -186,9 +232,11 @@ export default function DashboardPage() {
               </div>
             ))}
           </div>
+
           <div className="px-6 py-3 border-t border-ink/10 bg-cream-dark">
             <p className="text-xs text-ink-muted">
-              Distribution: <strong>13 Easy</strong> · <strong>7 Moderate</strong> · <strong>5 Hard</strong> — Questions are randomised and unique per student
+              Distribution: <strong>13 Easy</strong> · <strong>7 Moderate</strong> · <strong>5 Hard</strong> —
+              Questions are randomised and unique per student · Timer resets per section
             </p>
           </div>
         </motion.div>

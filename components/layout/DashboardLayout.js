@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 import { logout, getMe } from '../../store/slices/authSlice';
 import {
   LayoutDashboard, PlayCircle, History, Brain, LogOut,
-  Shield, BookOpen, Users, BarChart3, Settings, Menu, X,
+  Shield, BookOpen, Users, BarChart3, Settings, Menu, X, ScrollText,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -23,6 +23,7 @@ const adminNav = [
   { href: '/admin/settings', icon: Settings, label: 'Quiz Control' },
   { href: '/admin/questions', icon: BookOpen, label: 'Questions' },
   { href: '/admin/students', icon: Users, label: 'Students' },
+  { href: '/admin/logs', icon: ScrollText, label: 'Logs' },
 ];
 
 export default function DashboardLayout({ children }) {
@@ -32,7 +33,9 @@ export default function DashboardLayout({ children }) {
   const { user, isAuthenticated, initializing } = useSelector((s) => s.auth);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  useEffect(() => { if (!isAuthenticated || !user) dispatch(getMe()); }, []);
+  useEffect(() => {
+  if (isAuthenticated && !user) dispatch(getMe());
+}, []);
   useEffect(() => { if (!initializing && !isAuthenticated) router.replace('/login'); }, [initializing, isAuthenticated]);
   useEffect(() => { setSidebarOpen(false); }, [pathname]);
 
@@ -55,7 +58,7 @@ export default function DashboardLayout({ children }) {
 
   return (
     <div className="min-h-screen bg-cream flex">
-      {/* Mobile top bar — hidden on lg+ */}
+      {/* Mobile top bar */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-ink h-14 flex items-center px-4 justify-between border-b border-white/10">
         <Link href="/" className="flex items-center gap-2.5">
           <div className="w-8 h-8 bg-cream flex items-center justify-center font-black text-lg text-ink">A</div>
@@ -118,7 +121,7 @@ export default function DashboardLayout({ children }) {
         </div>
       </aside>
 
-      {/* Main content — offset by sidebar on lg+ and by mobile bar height */}
+      {/* Main content */}
       <main className="flex-1 lg:ml-64 min-h-screen pt-14 lg:pt-0">
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.1 }}
           className="p-4 sm:p-6 lg:p-8">

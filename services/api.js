@@ -9,7 +9,7 @@ const api = axios.create({
   timeout: 30000,
 });
 
-// Attach access token
+// Attach access token to every request
 api.interceptors.request.use((config) => {
   const token = Cookies.get('accessToken');
   if (token) config.headers.Authorization = `Bearer ${token}`;
@@ -29,7 +29,9 @@ const processQueue = (error, token = null) => {
 };
 
 api.interceptors.response.use(
+  // ✅ Interceptor already unwraps — authService must NOT do .then(r => r.data.data)
   (res) => res.data?.data ?? res.data,
+
   async (error) => {
     const original = error.config;
 
@@ -50,10 +52,15 @@ api.interceptors.response.use(
         const refreshToken = Cookies.get('refreshToken');
         if (!refreshToken) throw new Error('No refresh token');
 
-        const res = await axios.post(`${API_BASE}/auth/refresh`, { refreshToken }, { withCredentials: true });
+        // Use plain axios here (not api) to avoid interceptor loop
+        const res = await axios.post(
+          `${API_BASE}/auth/refresh`,
+          { refreshToken },
+          { withCredentials: true }
+        );
         const { accessToken, refreshToken: newRefresh } = res.data?.data ?? res.data;
 
-        Cookies.set('accessToken', accessToken, { expires: 1/96 });
+        Cookies.set('accessToken', accessToken, { expires: 1 / 96 });
         if (newRefresh) Cookies.set('refreshToken', newRefresh, { expires: 7 });
 
         api.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
@@ -64,6 +71,7 @@ api.interceptors.response.use(
         processQueue(refreshError, null);
         Cookies.remove('accessToken');
         Cookies.remove('refreshToken');
+        Cookies.remove('sessionId');
         if (typeof window !== 'undefined') window.location.href = '/login';
         return Promise.reject(refreshError);
       } finally {

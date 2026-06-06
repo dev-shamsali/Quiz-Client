@@ -1,138 +1,230 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import quizService from '../../services/quizService';
+import api from '../../services/api';
 
+// ── Section definitions — use durationMinutes everywhere ──────────────────
+export const SECTION_CONFIG = [
+  { id: 'react-next',  label: 'React.js + Next.js',                  categories: ['React.js', 'Next.js'],                               durationMinutes: 1 },
+  { id: 'node',        label: 'Node.js',                              categories: ['Node.js'],                                           durationMinutes: 1 },
+  { id: 'express',     label: 'Express.js',                           categories: ['Express.js'],                                        durationMinutes: 1 },
+  { id: 'mongodb',     label: 'MongoDB',                              categories: ['MongoDB'],                                           durationMinutes: 1 },
+  { id: 'auth-ps-dbg', label: 'Auth + Problem Solving + Debugging',  categories: ['Authentication & Security', 'Problem Solving', 'Debugging'], durationMinutes: 1 },
+];
+
+// Total = 180 min = 10800 seconds (3 hrs)
+export const TOTAL_DURATION = SECTION_CONFIG.reduce((s, c) => s + c.durationMinutes * 60, 0);
+
+// ── Async thunks ───────────────────────────────────────────────────────────
 export const startQuiz = createAsyncThunk('quiz/start', async (_, { rejectWithValue }) => {
   try {
-    return await quizService.startQuiz();
+    const res = await api.post('/quiz/start');
+    return res;
   } catch (err) {
     return rejectWithValue(err.response?.data?.message || 'Failed to start quiz');
   }
 });
 
-export const submitQuiz = createAsyncThunk('quiz/submit', async ({ attemptId, answers, timeTaken }, { rejectWithValue }) => {
-  try {
-    return await quizService.submitQuiz(attemptId, { answers, timeTaken });
-  } catch (err) {
-    return rejectWithValue(err.response?.data?.message || 'Failed to submit quiz');
+export const submitQuiz = createAsyncThunk(
+  'quiz/submit',
+  async ({ attemptId, answers, timeTaken, violation }, { rejectWithValue }) => {
+    try {
+      const res = await api.post(`/quiz/submit/${attemptId}`, { answers, timeTaken, violation });
+      return res;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || 'Submission failed');
+    }
   }
-});
+);
 
-export const getAttempts = createAsyncThunk('quiz/getAttempts', async (params, { rejectWithValue }) => {
-  try {
-    return await quizService.getAttempts(params);
-  } catch (err) {
-    return rejectWithValue(err.response?.data?.message || 'Failed to fetch attempts');
+export const getAttempts = createAsyncThunk(
+  'quiz/getAttempts',
+  async ({ page = 1, limit = 5 } = {}, { rejectWithValue }) => {
+    try {
+      const res = await api.get(`/quiz/attempts?page=${page}&limit=${limit}`);
+      return res;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || 'Failed to fetch attempts');
+    }
   }
-});
+);
 
-export const getAttemptById = createAsyncThunk('quiz/getAttemptById', async (id, { rejectWithValue }) => {
-  try {
-    return await quizService.getAttemptById(id);
-  } catch (err) {
-    return rejectWithValue(err.response?.data?.message || 'Failed to fetch attempt');
+export const getAttemptById = createAsyncThunk(
+  'quiz/getAttemptById',
+  async (id, { rejectWithValue }) => {
+    try {
+      const res = await api.get(`/quiz/attempts/${id}`);
+      return res;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || 'Failed to fetch attempt');
+    }
   }
-});
+);
 
+// ── Initial state ──────────────────────────────────────────────────────────
+const initialState = {
+  questions:    [],
+  attemptId:    null,
+  currentIndex: 0,
+  answers:      {},
+
+  currentSectionIndex: 0,
+  unlockedUpTo:        0,
+  sectionTimeLeft:     SECTION_CONFIG[0].durationMinutes * 60,
+  sectionStartIndices: [],
+
+  timeLeft: TOTAL_DURATION,
+
+  loading:    false,
+  submitting: false,
+  result:     null,
+  error:      null,
+
+  attempts:           [],
+  attemptsPagination: null,
+  selectedAttempt:    null,
+};
+
+const computeSectionStartIndices = (questions) => {
+  return SECTION_CONFIG.map((_, sIdx) => {
+    const first = questions.findIndex((q) => q._sectionIndex === sIdx);
+    return first === -1 ? 0 : first;
+  });
+};
+
+// ── Slice ──────────────────────────────────────────────────────────────────
 const quizSlice = createSlice({
   name: 'quiz',
-  initialState: {
-    // Active quiz
-    attemptId: null,
-    questions: [],
-    currentIndex: 0,
-    answers: {}, // { questionId: selectedAnswer }
-    startTime: null,
-    timeLeft: 45 * 60, // 45 minutes in seconds
-
-    // Results
-    result: null,
-
-    // Attempts history
-    attempts: [],
-    selectedAttempt: null,
-    pagination: null,
-
-    loading: false,
-    submitting: false,
-    error: null,
-  },
+  initialState,
   reducers: {
-    selectAnswer: (state, action) => {
-      const { questionId, answer } = action.payload;
+
+    selectAnswer(state, { payload: { questionId, answer } }) {
       state.answers[questionId] = answer;
     },
-    nextQuestion: (state) => {
-      if (state.currentIndex < state.questions.length - 1) state.currentIndex++;
+
+    nextQuestion(state) {
+      const next = state.currentIndex + 1;
+      if (next >= state.questions.length) return;
+      const nextQ = state.questions[next];
+      // Lock navigation to current section only (no advance until timer ticks to next)
+      if (nextQ._sectionIndex !== state.currentSectionIndex) return;
+      state.currentIndex = next;
     },
-    prevQuestion: (state) => {
-      if (state.currentIndex > 0) state.currentIndex--;
+
+    prevQuestion(state) {
+      if (state.currentIndex > 0) {
+        const prev = state.currentIndex - 1;
+        const prevQ = state.questions[prev];
+        // Lock navigation to current section only (cannot go back to previous completed section)
+        if (prevQ._sectionIndex !== state.currentSectionIndex) return;
+        state.currentIndex = prev;
+      }
     },
-    goToQuestion: (state, action) => {
-      state.currentIndex = action.payload;
+
+    goToQuestion(state, { payload: index }) {
+      if (index < 0 || index >= state.questions.length) return;
+      const q = state.questions[index];
+      // Only allow navigating to questions within the current active section
+      if (q._sectionIndex !== state.currentSectionIndex) return;
+      state.currentIndex = index;
     },
-    tickTimer: (state) => {
-      if (state.timeLeft > 0) state.timeLeft--;
+
+    goToSection(state, { payload: sectionIndex }) {
+      // Students cannot manually jump to other sections
+      if (sectionIndex !== state.currentSectionIndex) return;
+      const firstIdx = state.sectionStartIndices[sectionIndex];
+      if (firstIdx === undefined) return;
+      state.currentIndex        = firstIdx;
+      state.currentSectionIndex = sectionIndex;
     },
-    resetQuiz: (state) => {
-      state.attemptId = null;
-      state.questions = [];
-      state.currentIndex = 0;
-      state.answers = {};
-      state.startTime = null;
-      state.timeLeft = 45 * 60;
-      state.result = null;
-      state.error = null;
+
+    tickTimer(state) {
+      if (state.timeLeft > 0) state.timeLeft -= 1;
     },
-    clearError: (state) => { state.error = null; },
+
+    tickSectionTimer(state) {
+      if (state.sectionTimeLeft > 0) state.sectionTimeLeft -= 1;
+    },
+
+    advanceSection(state) {
+      const next = state.currentSectionIndex + 1;
+      if (next >= SECTION_CONFIG.length) return;
+      state.unlockedUpTo        = next;
+      state.currentSectionIndex = next;
+      // KEY FIX: use durationMinutes * 60, not duration
+      state.sectionTimeLeft     = SECTION_CONFIG[next].durationMinutes * 60;
+      const firstIdx = state.sectionStartIndices[next];
+      if (firstIdx !== undefined) state.currentIndex = firstIdx;
+    },
+
+    resetQuiz: () => ({ ...initialState }),
   },
+
   extraReducers: (builder) => {
     builder
-      .addCase(startQuiz.pending, (state) => { state.loading = true; state.error = null; })
-      .addCase(startQuiz.fulfilled, (state, action) => {
-        state.loading = false;
-        state.attemptId = action.payload.attemptId;
-        state.questions = action.payload.questions;
-        state.startTime = action.payload.startTime;
+      .addCase(startQuiz.pending, (state) => {
+        state.loading = true;
+        state.error   = null;
+      })
+      .addCase(startQuiz.fulfilled, (state, { payload }) => {
+        state.loading    = false;
+        state.questions  = payload.questions || [];
+        state.attemptId  = payload.attemptId;
         state.currentIndex = 0;
-        state.answers = {};
-      })
-      .addCase(startQuiz.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
+        state.answers    = {};
 
-      .addCase(submitQuiz.pending, (state) => { state.submitting = true; state.error = null; })
-      .addCase(submitQuiz.fulfilled, (state, action) => {
-        state.submitting = false;
-        state.result = action.payload;
-      })
-      .addCase(submitQuiz.rejected, (state, action) => {
-        state.submitting = false;
-        state.error = action.payload;
-      })
+        state.sectionStartIndices = computeSectionStartIndices(state.questions);
 
-      .addCase(getAttempts.pending, (state) => { state.loading = true; })
-      .addCase(getAttempts.fulfilled, (state, action) => {
-        state.loading = false;
-        state.attempts = action.payload.attempts;
-        state.pagination = action.payload.pagination;
-      })
-      .addCase(getAttempts.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
+        state.currentSectionIndex = 0;
+        state.unlockedUpTo        = 0;
+        // KEY FIX: use durationMinutes * 60
+        state.sectionTimeLeft     = SECTION_CONFIG[0].durationMinutes * 60;
 
-      .addCase(getAttemptById.pending, (state) => { state.loading = true; })
-      .addCase(getAttemptById.fulfilled, (state, action) => {
-        state.loading = false;
-        state.selectedAttempt = action.payload.attempt;
+        state.timeLeft = payload.timeLeftSeconds ?? TOTAL_DURATION;
       })
-      .addCase(getAttemptById.rejected, (state, action) => {
+      .addCase(startQuiz.rejected, (state, { payload }) => {
         state.loading = false;
-        state.error = action.payload;
+        state.error   = payload;
       });
+
+    builder
+      .addCase(submitQuiz.pending,   (state) => { state.submitting = true; })
+      .addCase(submitQuiz.fulfilled, (state, { payload }) => {
+        state.submitting = false;
+        state.result     = payload;
+      })
+      .addCase(submitQuiz.rejected,  (state, { payload }) => {
+        state.submitting = false;
+        state.error      = payload;
+      });
+
+    builder
+      .addCase(getAttempts.pending,   (state) => { state.loading = true; })
+      .addCase(getAttempts.fulfilled, (state, { payload }) => {
+        state.loading            = false;
+        state.attempts           = payload.attempts   || [];
+        state.attemptsPagination = payload.pagination || null;
+      })
+      .addCase(getAttempts.rejected,  (state) => { state.loading = false; });
+
+    builder
+      .addCase(getAttemptById.pending,   (state) => { state.loading = true; })
+      .addCase(getAttemptById.fulfilled, (state, { payload }) => {
+        state.loading         = false;
+        state.selectedAttempt = payload.attempt || null;
+      })
+      .addCase(getAttemptById.rejected,  (state) => { state.loading = false; });
   },
 });
 
-export const { selectAnswer, nextQuestion, prevQuestion, goToQuestion, tickTimer, resetQuiz, clearError } = quizSlice.actions;
+export const {
+  selectAnswer,
+  nextQuestion,
+  prevQuestion,
+  goToQuestion,
+  goToSection,
+  tickTimer,
+  tickSectionTimer,
+  advanceSection,
+  resetQuiz,
+} = quizSlice.actions;
+
 export default quizSlice.reducer;

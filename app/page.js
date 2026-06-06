@@ -49,7 +49,7 @@ export default function HomePage() {
         <motion.h1 variants={fadeUp}
           style={{ fontSize: 'clamp(2.2rem, 5.5vw, 4rem)', lineHeight: 1.1, letterSpacing: -1, marginBottom: 28, fontWeight: 900 }}>
           Assess Your MERN Stack<br />
-          <span style={{ borderBottom: '4px solid #000' }}>Mastery</span> — With AI
+          <span >Mastery</span> - With AI
         </motion.h1>
         <motion.p variants={fadeUp} className="text-ink-muted text-lg leading-relaxed max-w-xl mx-auto mb-12">
           A proctored, AI-powered quiz platform designed for BVoc students. Demonstrate your skills, receive expert feedback, and track your growth.
