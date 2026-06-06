@@ -177,7 +177,7 @@ export default function ResultsPage() {
                       : <XCircle size={17} />}
                   </div>
 
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     {/* Badges */}
                     <div className="flex items-center gap-2 mb-1.5">
                       <span className="text-xs text-ink-light">Q{i + 1}</span>
