@@ -104,32 +104,31 @@ const quizSlice = createSlice({
       const next = state.currentIndex + 1;
       if (next >= state.questions.length) return;
       const nextQ = state.questions[next];
-      // Lock navigation to current section only (no advance until timer ticks to next)
-      if (nextQ._sectionIndex !== state.currentSectionIndex) return;
+      if (nextQ._sectionIndex > state.unlockedUpTo) return;
       state.currentIndex = next;
+      state.currentSectionIndex = nextQ._sectionIndex;
     },
 
     prevQuestion(state) {
       if (state.currentIndex > 0) {
         const prev = state.currentIndex - 1;
         const prevQ = state.questions[prev];
-        // Lock navigation to current section only (cannot go back to previous completed section)
-        if (prevQ._sectionIndex !== state.currentSectionIndex) return;
+        if (prevQ._sectionIndex > state.unlockedUpTo) return;
         state.currentIndex = prev;
+        state.currentSectionIndex = prevQ._sectionIndex;
       }
     },
 
     goToQuestion(state, { payload: index }) {
       if (index < 0 || index >= state.questions.length) return;
       const q = state.questions[index];
-      // Only allow navigating to questions within the current active section
-      if (q._sectionIndex !== state.currentSectionIndex) return;
+      if (q._sectionIndex > state.unlockedUpTo) return;
       state.currentIndex = index;
+      state.currentSectionIndex = q._sectionIndex;
     },
 
     goToSection(state, { payload: sectionIndex }) {
-      // Students cannot manually jump to other sections
-      if (sectionIndex !== state.currentSectionIndex) return;
+      if (sectionIndex > state.unlockedUpTo) return;
       const firstIdx = state.sectionStartIndices[sectionIndex];
       if (firstIdx === undefined) return;
       state.currentIndex        = firstIdx;

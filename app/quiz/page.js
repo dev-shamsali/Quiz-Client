@@ -254,6 +254,19 @@ export default function QuizPage() {
     });
   };
 
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      const prevQ = questions[currentIndex - 1];
+      if (prevQ._sectionIndex !== currentSectionIndex) {
+        if (isSectionCompleted(prevQ._sectionIndex)) {
+          toast.error("You cannot go back to a completed section!");
+          return;
+        }
+      }
+      dispatch(prevQuestion());
+    }
+  };
+
   // Update ref immediately inside setter — no stale reads ever
   const handleDescriptionChange = useCallback((questionId, val) => {
     const id = toIdString(questionId);
@@ -283,6 +296,17 @@ export default function QuizPage() {
       ? !!(descriptions[qId] || '').trim()
       : !!answers[qId];
   }).length;
+
+  const isSectionCompleted = useCallback((sIdx) => {
+    const secQs = questions.filter((q) => q._sectionIndex === sIdx);
+    if (secQs.length === 0) return true;
+    return secQs.every((q) => {
+      const qId = toIdString(q._id);
+      return q.category === 'Problem Solving'
+        ? !!(descriptions[qId] || '').trim()
+        : !!answers[qId];
+    });
+  }, [questions, answers, descriptions]);
 
   const isLastInSection = (() => {
     const nextQ = questions[currentIndex + 1];
@@ -536,7 +560,7 @@ export default function QuizPage() {
         </AnimatePresence>
 
         <div className="flex items-center justify-between mb-4">
-          <button onClick={() => dispatch(prevQuestion())} disabled={currentIndex === 0} className="btn-secondary">
+          <button onClick={handlePrev} disabled={currentIndex === 0} className="btn-secondary">
             <ChevronLeft size={14} /> Prev
           </button>
           <span className="text-sm text-ink-muted">{answeredCount}/{questions.length} answered</span>
@@ -545,29 +569,23 @@ export default function QuizPage() {
               <Send size={13} /> Submit
             </motion.button>
           ) : isLastInSection && currentSectionIndex === unlockedUpTo ? (
-            sectionAnswered === sectionQuestions.length ? (
-              <button
-                onClick={() => {
-                  dispatch(advanceSection());
-                  const next = SECTION_CONFIG[currentSectionIndex + 1];
-                  if (next) {
-                    setUnlockBanner(next.label);
-                    toast(`🔓 "${next.label}" is now open!`, {
-                      duration: 5000,
-                      icon: '🔔',
-                    });
-                    setTimeout(() => setUnlockBanner(null), 4000);
-                  }
-                }}
-                className="btn-primary flex items-center gap-2"
-              >
-                Next Section <ChevronRight size={14} />
-              </button>
-            ) : (
-              <button disabled className="btn-secondary opacity-50 cursor-not-allowed flex items-center gap-2">
-                <Lock size={12} /> Next Section
-              </button>
-            )
+            <button
+              onClick={() => {
+                dispatch(advanceSection());
+                const next = SECTION_CONFIG[currentSectionIndex + 1];
+                if (next) {
+                  setUnlockBanner(next.label);
+                  toast(`🔓 "${next.label}" is now open!`, {
+                    duration: 5000,
+                    icon: '🔔',
+                  });
+                  setTimeout(() => setUnlockBanner(null), 4000);
+                }
+              }}
+              className="btn-primary flex items-center gap-2"
+            >
+              Next Section <ChevronRight size={14} />
+            </button>
           ) : (
             <button onClick={() => dispatch(nextQuestion())} className="btn-primary">
               Next <ChevronRight size={14} />
@@ -580,7 +598,7 @@ export default function QuizPage() {
           <div className="flex flex-wrap gap-1.5 mb-4">
             {SECTION_CONFIG.map((sec, i) => {
               const col = SECTION_COLORS[i];
-              const locked = i !== currentSectionIndex;
+              const locked = i > unlockedUpTo || (i < currentSectionIndex && isSectionCompleted(i));
               const isActive = i === currentSectionIndex;
               return (
                 <button key={sec.id}
@@ -605,7 +623,7 @@ export default function QuizPage() {
             {questions.map((q, i) => {
               const secIdx = q._sectionIndex ?? 0;
               const col = SECTION_COLORS[secIdx];
-              const locked = secIdx !== currentSectionIndex;
+              const locked = secIdx > unlockedUpTo || (secIdx < currentSectionIndex && isSectionCompleted(secIdx));
               const qIdStr = toIdString(q._id);
               const isPS = q.category === 'Problem Solving';
               const done = isPS
