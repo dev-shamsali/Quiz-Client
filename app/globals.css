@@ -78,7 +78,7 @@
 
   /* Code blocks */
   .code-block {
-    @apply bg-ink text-cream-dark border-2 border-black p-4 font-mono text-sm overflow-x-auto leading-relaxed;
+    @apply bg-ink text-cream-dark border-2 border-black p-4 font-mono text-sm overflow-x-auto leading-relaxed whitespace-pre-wrap break-words;
   }
 
   /* Sidebar nav */
