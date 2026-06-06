@@ -236,21 +236,21 @@ export default function ResultsPage() {
                       </div>
                     ) : (
                       /* ── MCQ ── */
-                      <div className="flex flex-col gap-2 mb-2 items-start">
+                      <div className="flex flex-col gap-2 mb-2 items-start max-w-full">
                         {q.selectedAnswer
-                          ? <span className={`px-2 py-0.5 border text-xs ${
+                          ? <div className={`px-2 py-1 border text-xs max-w-full break-words ${
                               q.isCorrect
                                 ? 'border-green-700 text-green-800 bg-green-50'
                                 : 'border-red-700 text-red-800 bg-red-50'}`}>
                               Your answer: {q.selectedAnswer}
-                            </span>
-                          : <span className="px-2 py-0.5 border border-gray-400 text-gray-600 bg-gray-50 text-xs">
+                            </div>
+                          : <div className="px-2 py-1 border border-gray-400 text-gray-600 bg-gray-50 text-xs max-w-full break-words">
                               Unanswered
-                            </span>}
+                            </div>}
                         {!q.isCorrect && (
-                          <span className="px-2 py-0.5 border border-green-700 text-green-800 bg-green-50 text-xs">
+                          <div className="px-2 py-1 border border-green-700 text-green-800 bg-green-50 text-xs max-w-full break-words">
                             Correct: {q.correctAnswer}
-                          </span>
+                          </div>
                         )}
                       </div>
                     )}
