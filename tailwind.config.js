@@ -24,7 +24,7 @@ module.exports = {
       fontFamily: {
         serif: ['"Times New Roman"', 'Times', 'Georgia', 'serif'],
         sans: ['"Times New Roman"', 'Times', 'Georgia', 'serif'],
-        mono: ['"Courier New"', 'Courier', 'monospace'],
+        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', '"Liberation Mono"', '"Courier New"', 'monospace'],
       },
       animation: {
         'fade-in': 'fadeIn 0.4s ease-in-out',

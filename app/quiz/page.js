@@ -424,7 +424,7 @@ export default function QuizPage() {
             </span>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
-            <div className={`flex items-center gap-1.5 px-3 py-1.5 border-2 font-mono font-bold text-xs
+            <div className={`flex items-center gap-1.5 px-3 h-9 border-2 font-mono font-bold text-xs
               ${sectionTimeLeft < 120
                 ? 'border-red-700 bg-red-50 text-red-700'
                 : `${currentSectionColor.border} ${currentSectionColor.bg} ${currentSectionColor.text}`}`}>
@@ -432,7 +432,7 @@ export default function QuizPage() {
               {formatTime(sectionTimeLeft)}
               <span className="hidden sm:inline font-normal opacity-70 ml-0.5">section</span>
             </div>
-            <div className={`flex items-center gap-1.5 px-3 py-1.5 border-2 font-mono font-black text-sm
+            <div className={`flex items-center gap-1.5 px-3 h-9 border-2 font-mono font-black text-sm
               ${timeLeft < 300 ? 'border-red-700 bg-red-50 text-red-700' : 'bg-ink border-ink text-cream'}`}>
               <Clock size={12} /> {formatTime(timeLeft)}
             </div>
@@ -565,7 +565,7 @@ export default function QuizPage() {
               </button>
             ) : (
               <button disabled className="btn-secondary opacity-50 cursor-not-allowed flex items-center gap-2">
-                <Lock size={12} /> {formatTime(sectionTimeLeft)} left
+                <Lock size={12} /> Next Section
               </button>
             )
           ) : (
