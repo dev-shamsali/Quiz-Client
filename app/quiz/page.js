@@ -270,7 +270,7 @@ export default function QuizPage() {
     const qId = toIdString(q._id);
     return (q.category === 'Problem Solving')
       ? !!(descriptions[qId] || '').trim()
-      : !!answers[q._id];
+      : !!answers[qId];
   }).length;
 
   const currentSection = SECTION_CONFIG[currentSectionIndex] || SECTION_CONFIG[0];
@@ -281,7 +281,7 @@ export default function QuizPage() {
     const qId = toIdString(q._id);
     return (q.category === 'Problem Solving')
       ? !!(descriptions[qId] || '').trim()
-      : !!answers[q._id];
+      : !!answers[qId];
   }).length;
 
   const isLastInSection = (() => {
@@ -323,9 +323,8 @@ export default function QuizPage() {
             <h1 className="text-2xl sm:text-3xl font-bold mb-3">Ready to Begin?</h1>
             <p className="text-ink-muted mb-6 leading-relaxed max-w-md mx-auto">
               25 randomised questions across 5 timed sections — 3 hours total.
-              Each section unlocks only when the previous timer expires.
+              Each section unlocks when the previous timer expires or when you complete it early.
             </p>
-
             <div className="mb-6 text-left border border-ink/10 divide-y divide-ink/10">
               {SECTION_CONFIG.map((sec, i) => {
                 const col = SECTION_COLORS[i];
@@ -364,7 +363,7 @@ export default function QuizPage() {
                 <ShieldAlert size={12} /> Strict Proctoring Active
               </p>
               <ul className="text-xs text-red-700 leading-relaxed space-y-1">
-                <li>• Each section is <strong>time-locked</strong> — next section opens only when timer expires</li>
+                <li>• Each section is <strong>timed</strong> — next section opens when the timer expires or when you complete it early</li>
                 <li>• Once a section's timer expires, it is locked and you <strong>cannot go back</strong></li>
                 <li>• Quiz runs in <strong>fullscreen</strong> — exiting fullscreen immediately submits</li>
                 <li>• Switching tabs or minimising will <strong>auto-submit</strong> your quiz</li>
@@ -464,7 +463,7 @@ export default function QuizPage() {
               const id = toIdString(q._id);
               return (q.category === 'Problem Solving')
                 ? !!(descriptions[id] || '').trim()
-                : !!answers[q._id];
+                : !!answers[id];
             }).length;
             const fillPct = isActive && secQs.length > 0
               ? (secAns / secQs.length) * 100
@@ -516,10 +515,11 @@ export default function QuizPage() {
               ) : (
                 <div className="space-y-3">
                   {question.options.map((opt, i) => {
-                    const sel = answers[question._id] === opt;
+                    const qId = toIdString(question._id);
+                    const sel = answers[qId] === opt;
                     return (
                       <motion.button key={i} whileTap={{ scale: 0.99 }}
-                        onClick={() => dispatch(selectAnswer({ questionId: question._id, answer: opt }))}
+                        onClick={() => dispatch(selectAnswer({ questionId: qId, answer: opt }))}
                         className={`quiz-option ${sel ? 'selected' : ''}`}>
                         <span className={`inline-flex items-center justify-center w-7 h-7 border-2 text-xs font-black mr-3 flex-shrink-0
                           ${sel ? 'bg-ink text-cream border-ink' : 'border-ink/30 text-ink-muted'}`}>
@@ -545,9 +545,29 @@ export default function QuizPage() {
               <Send size={13} /> Submit
             </motion.button>
           ) : isLastInSection && currentSectionIndex === unlockedUpTo ? (
-            <button disabled className="btn-secondary opacity-50 cursor-not-allowed flex items-center gap-2">
-              <Lock size={12} /> {formatTime(sectionTimeLeft)} left
-            </button>
+            sectionAnswered === sectionQuestions.length ? (
+              <button
+                onClick={() => {
+                  dispatch(advanceSection());
+                  const next = SECTION_CONFIG[currentSectionIndex + 1];
+                  if (next) {
+                    setUnlockBanner(next.label);
+                    toast(`🔓 "${next.label}" is now open!`, {
+                      duration: 5000,
+                      icon: '🔔',
+                    });
+                    setTimeout(() => setUnlockBanner(null), 4000);
+                  }
+                }}
+                className="btn-primary flex items-center gap-2"
+              >
+                Next Section <ChevronRight size={14} />
+              </button>
+            ) : (
+              <button disabled className="btn-secondary opacity-50 cursor-not-allowed flex items-center gap-2">
+                <Lock size={12} /> {formatTime(sectionTimeLeft)} left
+              </button>
+            )
           ) : (
             <button onClick={() => dispatch(nextQuestion())} className="btn-primary">
               Next <ChevronRight size={14} />
@@ -590,7 +610,7 @@ export default function QuizPage() {
               const isPS = q.category === 'Problem Solving';
               const done = isPS
                 ? !!(descriptions[qIdStr] || '').trim()
-                : !!answers[q._id];
+                : !!answers[qIdStr];
               const prevSecIdx = i > 0 ? (questions[i - 1]._sectionIndex ?? 0) : -1;
               const showDivider = i > 0 && secIdx !== prevSecIdx;
               return (
@@ -652,7 +672,7 @@ export default function QuizPage() {
                       const id = toIdString(q._id);
                       return (q.category === 'Problem Solving')
                         ? !!(descriptions[id] || '').trim()
-                        : !!answers[q._id];
+                        : !!answers[id];
                     }).length;
                     const locked = i > unlockedUpTo;
                     return (
