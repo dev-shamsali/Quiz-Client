@@ -25,20 +25,20 @@ const logActivity = async (event, reason = '', meta = {}, attemptId = null) => {
 };
 
 const KEY_COMBO_MAP = {
-  'Alt+Tab':     'Alt+Tab — switched to another window',
-  'Meta+Tab':    'Windows+Tab — opened task view',
-  'Meta+d':      'Windows+D — minimised to desktop',
-  'Meta+m':      'Windows+M — minimised all windows',
+  'Alt+Tab': 'Alt+Tab — switched to another window',
+  'Meta+Tab': 'Windows+Tab — opened task view',
+  'Meta+d': 'Windows+D — minimised to desktop',
+  'Meta+m': 'Windows+M — minimised all windows',
   'Meta+Escape': 'Windows+Esc — exited fullscreen',
-  'Alt+F4':      'Alt+F4 — attempted to close window',
-  'Escape':      'Escape key — exited fullscreen',
-  'F11':         'F11 — toggled fullscreen',
+  'Alt+F4': 'Alt+F4 — attempted to close window',
+  'Escape': 'Escape key — exited fullscreen',
+  'F11': 'F11 — toggled fullscreen',
 };
 
 const formatTime = (s) => {
   if (s >= 3600) {
-    const h   = Math.floor(s / 3600);
-    const m   = Math.floor((s % 3600) / 60);
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
     const sec = s % 60;
     return `${h}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`;
   }
@@ -46,11 +46,11 @@ const formatTime = (s) => {
 };
 
 const SECTION_COLORS = [
-  { bg: 'bg-blue-50',   border: 'border-blue-700',   text: 'text-blue-800',   dot: 'bg-blue-600',   light: 'bg-blue-100'   },
-  { bg: 'bg-green-50',  border: 'border-green-700',  text: 'text-green-800',  dot: 'bg-green-600',  light: 'bg-green-100'  },
+  { bg: 'bg-blue-50', border: 'border-blue-700', text: 'text-blue-800', dot: 'bg-blue-600', light: 'bg-blue-100' },
+  { bg: 'bg-green-50', border: 'border-green-700', text: 'text-green-800', dot: 'bg-green-600', light: 'bg-green-100' },
   { bg: 'bg-yellow-50', border: 'border-yellow-700', text: 'text-yellow-800', dot: 'bg-yellow-500', light: 'bg-yellow-100' },
   { bg: 'bg-orange-50', border: 'border-orange-700', text: 'text-orange-800', dot: 'bg-orange-500', light: 'bg-orange-100' },
-  { bg: 'bg-purple-50', border: 'border-purple-700', text: 'text-purple-800', dot: 'bg-purple-600',  light: 'bg-purple-100' },
+  { bg: 'bg-purple-50', border: 'border-purple-700', text: 'text-purple-800', dot: 'bg-purple-600', light: 'bg-purple-100' },
 ];
 
 const toIdString = (id) => {
@@ -62,7 +62,7 @@ const toIdString = (id) => {
 
 export default function QuizPage() {
   const dispatch = useDispatch();
-  const router   = useRouter();
+  const router = useRouter();
 
   const {
     questions, attemptId, currentIndex, answers,
@@ -71,19 +71,19 @@ export default function QuizPage() {
     unlockedUpTo, sectionStartIndices,
   } = useSelector((s) => s.quiz);
 
-  const timerRef        = useRef(null);
+  const timerRef = useRef(null);
   const sectionTimerRef = useRef(null);
-  const submittedRef    = useRef(false);
-  const attemptIdRef    = useRef(null);
+  const submittedRef = useRef(false);
+  const attemptIdRef = useRef(null);
   const descriptionsRef = useRef({});
-  const advancingRef    = useRef(false);
+  const advancingRef = useRef(false);
 
-  const [started, setStarted]                 = useState(false);
-  const [confirmSubmit, setConfirmSubmit]     = useState(false);
-  const [violation, setViolation]             = useState(false);
+  const [started, setStarted] = useState(false);
+  const [confirmSubmit, setConfirmSubmit] = useState(false);
+  const [violation, setViolation] = useState(false);
   const [violationReason, setViolationReason] = useState('');
-  const [descriptions, setDescriptions]       = useState({});
-  const [unlockBanner, setUnlockBanner]       = useState(null);
+  const [descriptions, setDescriptions] = useState({});
+  const [unlockBanner, setUnlockBanner] = useState(null);
 
   // Keep refs in sync immediately — this is the stale-closure fix
   useEffect(() => { descriptionsRef.current = descriptions; }, [descriptions]);
@@ -104,7 +104,7 @@ export default function QuizPage() {
     submittedRef.current = true;
     clearInterval(timerRef.current);
     clearInterval(sectionTimerRef.current);
-    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    if (document.fullscreenElement) document.exitFullscreen().catch(() => { });
 
     // FIXED: use TOTAL_DURATION from slice (correctly computed from durationMinutes)
     const timeTaken = TOTAL_DURATION - timeLeft;
@@ -120,10 +120,10 @@ export default function QuizPage() {
       console.log(`Q ${qId} | category: ${q.category} | isPS: ${isPS} | desc: "${desc}"`);
 
       return {
-        questionId:     qId,
+        questionId: qId,
         selectedAnswer: isPS ? null : (answers[q._id] || answers[qId] || null),
-        timeSpent:      0,
-        description:    isPS ? desc : '',
+        timeSpent: 0,
+        description: isPS ? desc : '',
       };
     });
 
@@ -154,7 +154,7 @@ export default function QuizPage() {
 
   useEffect(() => {
     if (started && questions.length > 0 && !result) {
-      timerRef.current        = setInterval(() => dispatch(tickTimer()),        1000);
+      timerRef.current = setInterval(() => dispatch(tickTimer()), 1000);
       sectionTimerRef.current = setInterval(() => dispatch(tickSectionTimer()), 1000);
     }
     return () => {
@@ -201,9 +201,9 @@ export default function QuizPage() {
 
     const onKeyDown = (e) => {
       const parts = [];
-      if (e.ctrlKey)  parts.push('Control');
-      if (e.altKey)   parts.push('Alt');
-      if (e.metaKey)  parts.push('Meta');
+      if (e.ctrlKey) parts.push('Control');
+      if (e.altKey) parts.push('Alt');
+      if (e.metaKey) parts.push('Meta');
       if (e.shiftKey) parts.push('Shift');
       const key = e.key === ' ' ? 'Space' : e.key;
       if (!['Control', 'Alt', 'Meta', 'Shift'].includes(key)) parts.push(key);
@@ -212,7 +212,7 @@ export default function QuizPage() {
 
     const handleViolation = (event, fallbackReason) => {
       if (submittedRef.current) return;
-      const keyReason   = KEY_COMBO_MAP[lastKeyCombo] || (lastKeyCombo ? `Key combo: ${lastKeyCombo}` : '');
+      const keyReason = KEY_COMBO_MAP[lastKeyCombo] || (lastKeyCombo ? `Key combo: ${lastKeyCombo}` : '');
       const finalReason = keyReason || fallbackReason;
       setViolationReason(finalReason);
       setViolation(true);
@@ -222,9 +222,9 @@ export default function QuizPage() {
     };
 
     const onVisibilityChange = () => { if (document.hidden) handleViolation('tab_switch', 'Tab switch detected'); };
-    const onBlur             = () => handleViolation('window_blur', 'Window focus lost');
+    const onBlur = () => handleViolation('window_blur', 'Window focus lost');
     const onFullscreenChange = () => { if (!document.fullscreenElement) handleViolation('fullscreen_exit', 'Fullscreen exited'); };
-    const onBeforeUnload     = (e) => { e.preventDefault(); e.returnValue = ''; handleViolation('browser_close_attempt', 'Browser close attempted'); };
+    const onBeforeUnload = (e) => { e.preventDefault(); e.returnValue = ''; handleViolation('browser_close_attempt', 'Browser close attempted'); };
 
     document.addEventListener('keydown', onKeyDown);
     document.addEventListener('visibilitychange', onVisibilityChange);
@@ -246,7 +246,7 @@ export default function QuizPage() {
       if (!res.error) {
         setStarted(true);
         submittedRef.current = false;
-        document.documentElement.requestFullscreen().catch(() => {});
+        document.documentElement.requestFullscreen().catch(() => { });
         logActivity('quiz_started', 'Student started quiz', {}, res.payload?.attemptId);
       } else {
         toast.error(res.payload || 'Failed to start quiz');
@@ -273,11 +273,11 @@ export default function QuizPage() {
       : !!answers[q._id];
   }).length;
 
-  const currentSection      = SECTION_CONFIG[currentSectionIndex] || SECTION_CONFIG[0];
+  const currentSection = SECTION_CONFIG[currentSectionIndex] || SECTION_CONFIG[0];
   const currentSectionColor = SECTION_COLORS[currentSectionIndex] || SECTION_COLORS[0];
 
   const sectionQuestions = questions.filter((q) => q._sectionIndex === currentSectionIndex);
-  const sectionAnswered  = sectionQuestions.filter((q) => {
+  const sectionAnswered = sectionQuestions.filter((q) => {
     const qId = toIdString(q._id);
     return (q.category === 'Problem Solving')
       ? !!(descriptions[qId] || '').trim()
@@ -398,7 +398,7 @@ export default function QuizPage() {
   if (!question) return null;
 
   const isProblemSolving = question.category === 'Problem Solving';
-  const questionId       = toIdString(question._id);
+  const questionId = toIdString(question._id);
 
   return (
     <QuizLayout>
@@ -455,11 +455,11 @@ export default function QuizPage() {
 
         <div className="h-1.5 bg-ink/10 mb-4 flex rounded-full overflow-hidden">
           {SECTION_CONFIG.map((sec, i) => {
-            const secQs    = questions.filter((q) => q._sectionIndex === i);
+            const secQs = questions.filter((q) => q._sectionIndex === i);
             const widthPct = secQs.length > 0 ? (secQs.length / questions.length) * 100 : 0;
             const isUnlocked = i <= unlockedUpTo;
-            const isActive   = i === currentSectionIndex;
-            const col        = SECTION_COLORS[i];
+            const isActive = i === currentSectionIndex;
+            const col = SECTION_COLORS[i];
             const secAns = secQs.filter((q) => {
               const id = toIdString(q._id);
               return (q.category === 'Problem Solving')
@@ -559,7 +559,7 @@ export default function QuizPage() {
           <p className="text-xs font-bold uppercase tracking-widest text-ink-light mb-3">Navigator</p>
           <div className="flex flex-wrap gap-1.5 mb-4">
             {SECTION_CONFIG.map((sec, i) => {
-              const col    = SECTION_COLORS[i];
+              const col = SECTION_COLORS[i];
               const locked = i !== currentSectionIndex;
               const isActive = i === currentSectionIndex;
               return (
@@ -583,15 +583,15 @@ export default function QuizPage() {
 
           <div className="flex flex-wrap gap-1.5">
             {questions.map((q, i) => {
-              const secIdx      = q._sectionIndex ?? 0;
-              const col         = SECTION_COLORS[secIdx];
-              const locked      = secIdx !== currentSectionIndex;
-              const qIdStr      = toIdString(q._id);
-              const isPS        = q.category === 'Problem Solving';
-              const done        = isPS
+              const secIdx = q._sectionIndex ?? 0;
+              const col = SECTION_COLORS[secIdx];
+              const locked = secIdx !== currentSectionIndex;
+              const qIdStr = toIdString(q._id);
+              const isPS = q.category === 'Problem Solving';
+              const done = isPS
                 ? !!(descriptions[qIdStr] || '').trim()
                 : !!answers[q._id];
-              const prevSecIdx  = i > 0 ? (questions[i - 1]._sectionIndex ?? 0) : -1;
+              const prevSecIdx = i > 0 ? (questions[i - 1]._sectionIndex ?? 0) : -1;
               const showDivider = i > 0 && secIdx !== prevSecIdx;
               return (
                 <div key={i} className="flex items-center gap-1.5">
@@ -617,7 +617,7 @@ export default function QuizPage() {
 
           <div className="flex flex-wrap gap-3 mt-3 pt-3 border-t border-ink/10">
             {SECTION_CONFIG.map((sec, i) => {
-              const col    = SECTION_COLORS[i];
+              const col = SECTION_COLORS[i];
               const locked = i !== currentSectionIndex;
               return (
                 <div key={sec.id} className="flex items-center gap-1.5">
@@ -646,8 +646,8 @@ export default function QuizPage() {
                 </p>
                 <div className="text-left mb-6 space-y-1.5">
                   {SECTION_CONFIG.map((sec, i) => {
-                    const col    = SECTION_COLORS[i];
-                    const secQs  = questions.filter((q) => q._sectionIndex === i);
+                    const col = SECTION_COLORS[i];
+                    const secQs = questions.filter((q) => q._sectionIndex === i);
                     const secAns = secQs.filter((q) => {
                       const id = toIdString(q._id);
                       return (q.category === 'Problem Solving')
