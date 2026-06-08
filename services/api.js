@@ -9,10 +9,14 @@ const api = axios.create({
   timeout: 30000,
 });
 
-// Attach access token to every request
+// Attach access token and session ID to every request
 api.interceptors.request.use((config) => {
   const token = Cookies.get('accessToken');
   if (token) config.headers.Authorization = `Bearer ${token}`;
+  
+  const sessionId = Cookies.get('sessionId');
+  if (sessionId) config.headers['x-session-id'] = sessionId;
+  
   return config;
 });
 

@@ -92,9 +92,9 @@ export default function LoginPage() {
               <Link href="/register" className="font-bold underline hover:no-underline">Create an account</Link>
             </p>
           </div>
-          <div className="mt-5 p-4 border border-black/20 bg-cream-dark text-center">
+          {/* <div className="mt-5 p-4 border border-black/20 bg-cream-dark text-center">
             <p className="text-xs text-ink-light"><strong>Admin demo:</strong> admin@devquiz.com / Admin@123</p>
-          </div>
+          </div> */}
         </motion.div>
       </div>
     </div>

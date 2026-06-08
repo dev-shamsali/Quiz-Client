@@ -159,7 +159,7 @@ export default function ResultsPage() {
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="card mb-6">
           <div className="card-header"><h3 className="font-bold">Answer Review</h3></div>
           {attempt.questions?.map((q, i) => {
-            const isPS          = q.question?.category === 'Problem Solving' || (!q.selectedAnswer && q.description !== undefined);
+            const isPS          = q.category === 'Problem Solving' || q.question?.category === 'Problem Solving' || q.question?.type === 'problem-solving';
             const writtenAnswer = (q.description || '').trim();
             const wasAnswered   = isPS ? !!writtenAnswer : !!q.selectedAnswer;
 

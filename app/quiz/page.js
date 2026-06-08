@@ -3,7 +3,7 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import axios from 'axios';
+import api from '../../services/api';
 import Cookies from 'js-cookie';
 import {
   startQuiz, submitQuiz, selectAnswer, nextQuestion, prevQuestion,
@@ -20,7 +20,7 @@ import toast from 'react-hot-toast';
 const logActivity = async (event, reason = '', meta = {}, attemptId = null) => {
   try {
     const sessionId = Cookies.get('sessionId');
-    await axios.post('/api/activity-logs', { event, reason, meta, attemptId, sessionId });
+    await api.post('/activity-logs', { event, reason, meta, attemptId, sessionId });
   } catch { }
 };
 

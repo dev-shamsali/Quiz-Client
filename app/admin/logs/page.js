@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../../../services/api';
 import DashboardLayout from '../../../components/layout/DashboardLayout';
 import { RefreshCw, ChevronDown, ChevronUp, Search } from 'lucide-react';
 
@@ -79,9 +79,9 @@ export default function AdminLogsPage() {
     setLoading(true);
     try {
       const params = new URLSearchParams({ page, limit: 50 });
-      const { data } = await axios.get(`/api/activity-logs?${params}`);
-      setLogs(data.data.logs);
-      setPagination(data.data.pagination);
+      const data = await api.get(`/activity-logs?${params}`);
+      setLogs(data.logs);
+      setPagination(data.pagination);
       // ── Do NOT auto-expand — start all collapsed ──────────────────────
       setExpanded({});
     } catch (e) {
