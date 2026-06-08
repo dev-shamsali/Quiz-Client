@@ -117,7 +117,7 @@ export default function QuizPage() {
       const isPS = q.category === 'Problem Solving';
       const desc = latestDescriptions[qId] || '';
 
-      console.log(`Q ${qId} | category: ${q.category} | isPS: ${isPS} | desc: "${desc}"`);
+      // console.log(`Q ${qId} | category: ${q.category} | isPS: ${isPS} | desc: "${desc}"`);
 
       return {
         questionId: qId,
@@ -132,10 +132,10 @@ export default function QuizPage() {
       const t = (questions[i] || {}).type;
       return cat === 'Problem Solving' || t === 'problem-solving';
     });
-    console.log('=== FINAL SUBMIT DEBUG ===');
-    console.log('descriptions at submit:', JSON.stringify(latestDescriptions));
-    console.log('PS answers:', JSON.stringify(psAnswers, null, 2));
-    console.log('==========================');
+    // console.log('=== FINAL SUBMIT DEBUG ===');
+    // console.log('descriptions at submit:', JSON.stringify(latestDescriptions));
+    // console.log('PS answers:', JSON.stringify(psAnswers, null, 2));
+    // console.log('==========================');
 
     dispatch(submitQuiz({ attemptId, answers: answersArray, timeTaken, violation: isViolation }))
       .then((res) => {

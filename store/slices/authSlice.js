@@ -16,7 +16,7 @@ export const register = createAsyncThunk('auth/register', async (data, { rejectW
 export const login = createAsyncThunk('auth/login', async (data, { rejectWithValue }) => {
   try {
     const res = await authService.login(data);
-    console.log('LOGIN RES:', JSON.stringify(res));
+    // console.log('LOGIN RES:', JSON.stringify(res));
 
     // Interceptor returns res.data?.data ?? res.data
     // So res could be { user, accessToken, refreshToken }        ← if data exists
@@ -69,61 +69,61 @@ export const getMe = createAsyncThunk('auth/getMe', async (_, { rejectWithValue 
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
-    user:             null,
-    accessToken:      Cookies.get('accessToken') || null,
-    isAuthenticated:  !!Cookies.get('accessToken'),
-    loading:          false,
-    initializing:     true,
-    error:            null,
+    user: null,
+    accessToken: Cookies.get('accessToken') || null,
+    isAuthenticated: !!Cookies.get('accessToken'),
+    loading: false,
+    initializing: true,
+    error: null,
     registrationDone: false,
   },
   reducers: {
-    clearError:        (state)         => { state.error = null; },
-    clearRegistration: (state)         => { state.registrationDone = false; },
-    setToken:          (state, action) => {
-      state.accessToken     = action.payload;
+    clearError: (state) => { state.error = null; },
+    clearRegistration: (state) => { state.registrationDone = false; },
+    setToken: (state, action) => {
+      state.accessToken = action.payload;
       state.isAuthenticated = !!action.payload;
     },
   },
   extraReducers: (builder) => {
-    const pending  = (state)         => { state.loading = true;  state.error = null; };
+    const pending = (state) => { state.loading = true; state.error = null; };
     const rejected = (state, action) => { state.loading = false; state.error = action.payload; };
 
     builder
-      .addCase(register.pending,   pending)
+      .addCase(register.pending, pending)
       .addCase(register.fulfilled, (state) => {
-        state.loading          = false;
+        state.loading = false;
         state.registrationDone = true;
       })
       .addCase(register.rejected, rejected)
 
-      .addCase(login.pending,   pending)
+      .addCase(login.pending, pending)
       .addCase(login.fulfilled, (state, action) => {
-        state.loading         = false;
-        state.initializing    = false;
-        state.user            = action.payload.user;
-        state.accessToken     = action.payload.accessToken;
+        state.loading = false;
+        state.initializing = false;
+        state.user = action.payload.user;
+        state.accessToken = action.payload.accessToken;
         state.isAuthenticated = true;
       })
       .addCase(login.rejected, rejected)
 
       .addCase(logout.fulfilled, (state) => {
-        state.user            = null;
-        state.accessToken     = null;
+        state.user = null;
+        state.accessToken = null;
         state.isAuthenticated = false;
-        state.initializing    = false;
+        state.initializing = false;
       })
 
-      .addCase(getMe.pending,   (state) => { state.initializing = true; })
+      .addCase(getMe.pending, (state) => { state.initializing = true; })
       .addCase(getMe.fulfilled, (state, action) => {
-        state.user            = action.payload.user;
+        state.user = action.payload.user;
         state.isAuthenticated = true;
-        state.initializing    = false;
+        state.initializing = false;
       })
       .addCase(getMe.rejected, (state) => {
-        state.user            = null;
+        state.user = null;
         state.isAuthenticated = false;
-        state.initializing    = false;
+        state.initializing = false;
         Cookies.remove('accessToken');
         Cookies.remove('refreshToken');
         Cookies.remove('sessionId');
