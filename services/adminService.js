@@ -10,6 +10,8 @@ const adminService = {
   getStudentDetail: (id) => api.get(`/admin/students/${id}`),
   getQuestionStats: () => api.get('/admin/questions/stats'),
   getRankings: () => api.get('/admin/rankings'),
+  toggleResumeAttempt: (id) => api.post(`/admin/attempts/${id}/toggle-resume`),
+  forceSuspendAttempt: (id) => api.post(`/admin/attempts/${id}/suspend`),
 };
 
 export default adminService;

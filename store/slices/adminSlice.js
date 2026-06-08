@@ -36,6 +36,16 @@ export const getRankings = createAsyncThunk('admin/rankings', async (_, { reject
   catch (err) { return rejectWithValue(err.response?.data?.message || 'Failed'); }
 });
 
+export const toggleResumeAttempt = createAsyncThunk('admin/toggleResumeAttempt', async (id, { rejectWithValue }) => {
+  try { return await adminService.toggleResumeAttempt(id); }
+  catch (err) { return rejectWithValue(err.response?.data?.message || 'Failed'); }
+});
+
+export const forceSuspendAttempt = createAsyncThunk('admin/forceSuspendAttempt', async (id, { rejectWithValue }) => {
+  try { return await adminService.forceSuspendAttempt(id); }
+  catch (err) { return rejectWithValue(err.response?.data?.message || 'Failed'); }
+});
+
 const adminSlice = createSlice({
   name: 'admin',
   initialState: {
@@ -92,7 +102,24 @@ const adminSlice = createSlice({
         state.loading = false;
         state.rankings = a.payload.rankings;
       })
-      .addCase(getRankings.rejected, fail);
+      .addCase(getRankings.rejected, fail)
+
+      .addCase(toggleResumeAttempt.fulfilled, (state, a) => {
+        const attempt = a.payload.attempt;
+        const studentIdx = state.students.findIndex(s => s._id === attempt.student);
+        if (studentIdx !== -1 && state.students[studentIdx].activeAttempt) {
+          state.students[studentIdx].activeAttempt.adminAllowedResume = attempt.adminAllowedResume;
+          state.students[studentIdx].activeAttempt.status = attempt.status;
+        }
+      })
+      .addCase(forceSuspendAttempt.fulfilled, (state, a) => {
+        const attempt = a.payload.attempt;
+        const studentIdx = state.students.findIndex(s => s._id === attempt.student);
+        if (studentIdx !== -1 && state.students[studentIdx].activeAttempt) {
+          state.students[studentIdx].activeAttempt.status = attempt.status;
+          state.students[studentIdx].activeAttempt.adminAllowedResume = attempt.adminAllowedResume;
+        }
+      });
   },
 });
 

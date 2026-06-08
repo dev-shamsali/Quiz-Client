@@ -13,67 +13,67 @@ const SYLLABUS = [
     category: 'React.js',
     color: 'border-blue-700 bg-blue-50 text-blue-900',
     dot: 'bg-blue-700',
-    sectionLabel: 'Section 1 — React.js + Next.js · 30 min',
+    sectionLabel: 'Section 1 — React & Next JS · 36 min',
     topics: ['JSX & Virtual DOM', 'Hooks (useState, useEffect, useRef, useMemo, useCallback)', 'Component Lifecycle', 'Props & State Management', 'Context API', 'React Router', 'Performance Optimisation', 'Error Boundaries', 'Code Splitting & Lazy Loading'],
   },
   {
     category: 'Next.js',
     color: 'border-gray-700 bg-gray-50 text-gray-900',
     dot: 'bg-gray-700',
-    sectionLabel: 'Section 1 — React.js + Next.js · 30 min',
+    sectionLabel: 'Section 1 — React & Next JS · 36 min',
     topics: ['App Router & Pages Router', 'Server & Client Components', 'Static Generation (SSG)', 'Server-Side Rendering (SSR)', 'Incremental Static Regeneration (ISR)', 'API Routes', 'Middleware & Edge Functions', 'Image Optimisation', 'Metadata & SEO'],
   },
   {
     category: 'Node.js',
     color: 'border-green-700 bg-green-50 text-green-900',
     dot: 'bg-green-700',
-    sectionLabel: 'Section 2 — Node.js · 30 min',
+    sectionLabel: 'Section 2 — NodeJS · 36 min',
     topics: ['Event Loop & Non-blocking I/O', 'Modules (CommonJS & ESM)', 'File System (fs module)', 'Streams & Buffers', 'Async/Await & Promises', 'Child Processes & Worker Threads', 'Cluster & Scaling', 'npm & package.json', 'Environment Variables'],
   },
   {
     category: 'Express.js',
     color: 'border-yellow-700 bg-yellow-50 text-yellow-900',
     dot: 'bg-yellow-700',
-    sectionLabel: 'Section 3 — Express.js · 30 min',
+    sectionLabel: 'Section 3 — Express JS · 36 min',
     topics: ['Routing & Route Parameters', 'Middleware Pipeline', 'Request & Response Handling', 'Error Handling Middleware', 'REST API Design', 'CORS Configuration', 'API Versioning', 'Rate Limiting', 'Request Validation'],
-  },
-  {
-    category: 'MongoDB',
-    color: 'border-emerald-700 bg-emerald-50 text-emerald-900',
-    dot: 'bg-emerald-700',
-    sectionLabel: 'Section 4 — MongoDB · 30 min',
-    topics: ['CRUD Operations', 'Mongoose Schemas & Models', 'Aggregation Pipeline', 'Indexing & Performance', 'Schema Design Patterns', 'Relationships & Populate', 'Transactions', 'Replica Sets', 'Atlas & Cloud Deployment'],
-  },
-  {
-    category: 'Authentication & Security',
-    color: 'border-red-700 bg-red-50 text-red-900',
-    dot: 'bg-red-700',
-    sectionLabel: 'Section 5 — Auth + Problem Solving + Debugging · 60 min',
-    topics: ['JWT (Access & Refresh Tokens)', 'bcrypt Password Hashing', 'OAuth 2.0 & PKCE', 'Cookie Security (httpOnly, SameSite)', 'RBAC (Role-Based Access Control)', 'CSRF & XSS Prevention', 'NoSQL Injection Protection', 'Rate Limiting', 'HTTPS & Secure Headers'],
   },
   {
     category: 'Problem Solving',
     color: 'border-purple-700 bg-purple-50 text-purple-900',
     dot: 'bg-purple-700',
-    sectionLabel: 'Section 5 — Auth + Problem Solving + Debugging · 60 min',
+    sectionLabel: 'Section 3 — Express JS · 36 min',
     topics: ['Array & Object Manipulation', 'Recursion & Memoization', 'Closures & Scope', 'Prototype Chain', 'Event Delegation', 'Debounce & Throttle', 'Sorting & Searching Algorithms', 'Data Structures (Linked List, Tree)', 'Time & Space Complexity'],
   },
   {
-    category: 'Debugging',
-    color: 'border-orange-700 bg-orange-50 text-orange-900',
-    dot: 'bg-orange-700',
-    sectionLabel: 'Section 5 — Auth + Problem Solving + Debugging · 60 min',
-    topics: ['React Error Boundaries & Hydration Issues', 'Node.js Memory Leak Detection', 'Express Hanging Requests', 'MongoDB Slow Query Analysis', 'CORS Troubleshooting', 'JWT & Auth Debugging', 'Browser DevTools', 'Network & API Debugging', 'Race Conditions & Async Bugs'],
+    category: 'MongoDB',
+    color: 'border-emerald-700 bg-emerald-50 text-emerald-900',
+    dot: 'bg-emerald-700',
+    sectionLabel: 'Section 4 — MongoDB · 36 min',
+    topics: ['CRUD Operations', 'Mongoose Schemas & Models', 'Aggregation Pipeline', 'Indexing & Performance', 'Schema Design Patterns', 'Relationships & Populate', 'Transactions', 'Replica Sets', 'Atlas & Cloud Deployment'],
+  },
+  {
+    category: 'Logical Reasoning',
+    color: 'border-indigo-700 bg-indigo-50 text-indigo-900',
+    dot: 'bg-indigo-700',
+    sectionLabel: 'Section 5 — Logical Reasoning & IQ · 36 min',
+    topics: ['Pattern Recognition', 'Syllogisms & Verbal Logic', 'Analytical Reasoning', 'Data Sufficiency', 'Logical Deduction'],
+  },
+  {
+    category: 'IQ',
+    color: 'border-pink-700 bg-pink-50 text-pink-900',
+    dot: 'bg-pink-700',
+    sectionLabel: 'Section 5 — Logical Reasoning & IQ · 36 min',
+    topics: ['Mathematical Puzzles', 'Sequence Completion', 'Spatial Visualization', 'Analogies & Association', 'Quantitative Aptitude'],
   },
 ];
 
 // Section summary cards shown above the syllabus
 const SECTION_SUMMARY = [
-  { label: 'React.js + Next.js',                  duration: '30 min', color: 'border-blue-700 bg-blue-50 text-blue-900',      dot: 'bg-blue-700'   },
-  { label: 'Node.js',                              duration: '30 min', color: 'border-green-700 bg-green-50 text-green-900',   dot: 'bg-green-700'  },
-  { label: 'Express.js',                           duration: '30 min', color: 'border-yellow-700 bg-yellow-50 text-yellow-900', dot: 'bg-yellow-700' },
-  { label: 'MongoDB',                              duration: '30 min', color: 'border-emerald-700 bg-emerald-50 text-emerald-900', dot: 'bg-emerald-700' },
-  { label: 'Auth + Problem Solving + Debugging',   duration: '60 min', color: 'border-purple-700 bg-purple-50 text-purple-900', dot: 'bg-purple-700' },
+  { label: 'React & Next JS',                      duration: '36 min', color: 'border-blue-700 bg-blue-50 text-blue-900',      dot: 'bg-blue-700'   },
+  { label: 'NodeJS',                               duration: '36 min', color: 'border-gray-700 bg-gray-50 text-gray-900',      dot: 'bg-gray-700'   },
+  { label: 'Express JS',                           duration: '36 min', color: 'border-green-700 bg-green-50 text-green-900',   dot: 'bg-green-700'  },
+  { label: 'MongoDB',                              duration: '36 min', color: 'border-emerald-700 bg-emerald-50 text-emerald-900', dot: 'bg-emerald-700' },
+  { label: 'Logical Reasoning & IQ',               duration: '36 min', color: 'border-purple-700 bg-purple-50 text-purple-900', dot: 'bg-purple-700' },
 ];
 
 const gradeStyle = {
@@ -184,7 +184,7 @@ export default function DashboardPage() {
             <BookOpen size={15} />
             <h2 className="font-bold">{settings?.syllabusTitle || 'Assessment Syllabus'}</h2>
             <span className="ml-auto text-xs text-ink-muted font-normal hidden sm:inline">
-              300 Questions · MERN Stack · 8 Categories · 5 Sections
+              1200+ Questions · MERN Stack & IQ · 8 Categories · 5 Sections
             </span>
           </div>
 

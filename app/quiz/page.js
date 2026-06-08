@@ -84,6 +84,25 @@ export default function QuizPage() {
   const [violationReason, setViolationReason] = useState('');
   const [descriptions, setDescriptions] = useState({});
   const [unlockBanner, setUnlockBanner] = useState(null);
+  const [suspendedMessage, setSuspendedMessage] = useState(null);
+
+  const saveProgressApi = async (latestAnswers, latestDescriptions) => {
+    if (!attemptIdRef.current) return;
+    try {
+      const answersArray = (questions || []).map((q) => {
+        const qId = toIdString(q._id);
+        const isPS = q.category === 'Problem Solving';
+        return {
+          questionId: qId,
+          selectedAnswer: isPS ? null : (latestAnswers[qId] || null),
+          description: isPS ? (latestDescriptions[qId] || '') : '',
+        };
+      });
+      await api.post(`/quiz/save-progress/${attemptIdRef.current}`, { answers: answersArray });
+    } catch (err) {
+      console.error('Failed to save progress:', err.message);
+    }
+  };
 
   // Keep refs in sync immediately — this is the stale-closure fix
   useEffect(() => { descriptionsRef.current = descriptions; }, [descriptions]);
@@ -246,10 +265,19 @@ export default function QuizPage() {
       if (!res.error) {
         setStarted(true);
         submittedRef.current = false;
+        if (res.payload?.descriptions) {
+          setDescriptions(res.payload.descriptions);
+        }
+        setSuspendedMessage(null);
         document.documentElement.requestFullscreen().catch(() => { });
         logActivity('quiz_started', 'Student started quiz', {}, res.payload?.attemptId);
       } else {
-        toast.error(res.payload || 'Failed to start quiz');
+        const errMsg = res.payload || '';
+        if (errMsg.includes('suspended') || errMsg.includes('unlock') || errMsg.includes('resume')) {
+          setSuspendedMessage(errMsg);
+        } else {
+          toast.error(errMsg || 'Failed to start quiz');
+        }
       }
     });
   };
@@ -319,6 +347,34 @@ export default function QuizPage() {
 
   const isLastQuestion = currentIndex === questions.length - 1;
 
+  if (suspendedMessage) {
+    return (
+      <QuizLayout showHeader={false}>
+        <div className="min-h-screen bg-amber-50 flex items-center justify-center p-4">
+          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+            className="card max-w-md w-full p-10 text-center border-2" style={{ borderColor: '#d97706' }}>
+            <ShieldAlert size={52} className="mx-auto mb-4 text-amber-600" />
+            <h2 className="text-2xl font-black mb-3 text-amber-800">Exam Suspended</h2>
+            <p className="text-amber-700 text-sm font-bold mb-4">{suspendedMessage}</p>
+            <p className="text-ink-muted text-sm leading-relaxed mb-6">
+              Your test session has been suspended due to a window exit, reload, proctoring violation, or technical malfunction. 
+              Please ask the administrator to allow you to resume from their control panel.
+            </p>
+            <button
+              onClick={() => {
+                setSuspendedMessage(null);
+                handleStart();
+              }}
+              className="btn btn-primary w-full"
+            >
+              Check Unlock Status & Resume
+            </button>
+          </motion.div>
+        </div>
+      </QuizLayout>
+    );
+  }
+
   if (violation) {
     return (
       <QuizLayout showHeader={false}>
@@ -350,7 +406,7 @@ export default function QuizPage() {
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold mb-3">Ready to Begin?</h1>
             <p className="text-ink-muted mb-6 leading-relaxed max-w-md mx-auto">
-              300 randomised questions across 5 timed sections — 3 hours total.
+              200 randomised questions across 5 timed sections — 3 hours total.
               Each section unlocks when the previous timer expires or when you complete it early.
             </p>
             <div className="mb-6 text-left border border-ink/10 divide-y divide-ink/10">
@@ -529,6 +585,7 @@ export default function QuizPage() {
                   <textarea
                     value={descriptions[questionId] || ''}
                     onChange={(e) => handleDescriptionChange(questionId, e.target.value)}
+                    onBlur={() => saveProgressApi(answers, descriptions)}
                     placeholder="Write your solution here — explain your approach, walk through the logic, mention relevant code or concepts…"
                     rows={10}
                     className="w-full resize-none border-2 border-ink/20 bg-cream-dark p-4 text-sm text-ink
@@ -547,7 +604,10 @@ export default function QuizPage() {
                     const sel = answers[qId] === opt;
                     return (
                       <motion.button key={i} whileTap={{ scale: 0.99 }}
-                        onClick={() => dispatch(selectAnswer({ questionId: qId, answer: opt }))}
+                        onClick={() => {
+                          dispatch(selectAnswer({ questionId: qId, answer: opt }));
+                          saveProgressApi({ ...answers, [qId]: opt }, descriptions);
+                        }}
                         className={`quiz-option ${sel ? 'selected' : ''}`}>
                         <span className={`inline-flex items-center justify-center w-7 h-7 border-2 text-xs font-black mr-3 flex-shrink-0
                           ${sel ? 'bg-ink text-cream border-ink' : 'border-ink/30 text-ink-muted'}`}>

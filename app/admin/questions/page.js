@@ -7,7 +7,7 @@ import QuestionModal from '../../../components/admin/QuestionModal';
 import { Plus, Search, Pencil, Trash2, Filter } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const CATEGORIES = ['React.js', 'Next.js', 'Node.js', 'Express.js', 'MongoDB', 'Authentication & Security', 'Problem Solving', 'Debugging'];
+const CATEGORIES = ['React.js', 'Next.js', 'Node.js', 'Express.js', 'MongoDB', 'Problem Solving', 'Logical Reasoning', 'IQ'];
 const DIFFICULTIES = ['easy', 'moderate', 'hard'];
 
 export default function QuestionsPage() {

@@ -3,11 +3,11 @@ import api from '../../services/api';
 
 // ── Section definitions — use durationMinutes everywhere ──────────────────
 export const SECTION_CONFIG = [
-  { id: 'react-next',  label: 'React.js + Next.js',                  categories: ['React.js', 'Next.js'],                               durationMinutes: 30 },
-  { id: 'node',        label: 'Node.js',                              categories: ['Node.js'],                                           durationMinutes: 30 },
-  { id: 'express',     label: 'Express.js',                           categories: ['Express.js'],                                        durationMinutes: 30 },
-  { id: 'mongodb',     label: 'MongoDB',                              categories: ['MongoDB'],                                           durationMinutes: 30 },
-  { id: 'auth-ps-dbg', label: 'Auth + Problem Solving + Debugging',  categories: ['Authentication & Security', 'Problem Solving', 'Debugging'], durationMinutes: 60 },
+  { id: 'react-next',   label: 'React & Next JS',                     categories: ['React.js', 'Next.js'],                               durationMinutes: 36 },
+  { id: 'nodejs',       label: 'NodeJS',                              categories: ['Node.js'],                                           durationMinutes: 36 },
+  { id: 'express',      label: 'Express JS',                          categories: ['Express.js'],                                        durationMinutes: 36 },
+  { id: 'mongodb',      label: 'MongoDB',                             categories: ['MongoDB'],                                           durationMinutes: 36 },
+  { id: 'iq-based',     label: 'Logical Reasoning & IQ',               categories: ['Logical Reasoning', 'IQ'],                           durationMinutes: 36 },
 ];
 
 // Total = 180 min = 10800 seconds (3 hrs)
@@ -167,17 +167,20 @@ const quizSlice = createSlice({
         state.loading    = false;
         state.questions  = payload.questions || [];
         state.attemptId  = payload.attemptId;
-        state.currentIndex = 0;
-        state.answers    = {};
-
+        
         state.sectionStartIndices = computeSectionStartIndices(state.questions);
 
-        state.currentSectionIndex = 0;
-        state.unlockedUpTo        = 0;
-        // KEY FIX: use durationMinutes * 60
-        state.sectionTimeLeft     = SECTION_CONFIG[0].durationMinutes * 60;
-
-        state.timeLeft = payload.timeLeftSeconds ?? TOTAL_DURATION;
+        // Resume active section and position
+        const activeSec = payload.activeSectionIndex ?? 0;
+        state.currentSectionIndex = activeSec;
+        state.unlockedUpTo        = activeSec;
+        
+        const firstIdx = state.sectionStartIndices[activeSec];
+        state.currentIndex = firstIdx !== undefined ? firstIdx : 0;
+        
+        state.sectionTimeLeft     = payload.sectionTimeLeftSeconds ?? (SECTION_CONFIG[activeSec].durationMinutes * 60);
+        state.timeLeft            = payload.timeLeftSeconds ?? TOTAL_DURATION;
+        state.answers             = payload.answers || {};
       })
       .addCase(startQuiz.rejected, (state, { payload }) => {
         state.loading = false;

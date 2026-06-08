@@ -12,16 +12,43 @@ const defaultForm = {
   realWorldUseCase: '', tags: '',
 };
 
-const CATEGORIES = ['React.js', 'Next.js', 'Node.js', 'Express.js', 'MongoDB', 'Authentication & Security', 'Problem Solving', 'Debugging'];
+const CATEGORIES = ['React.js', 'Next.js', 'Node.js', 'Express.js', 'MongoDB', 'Problem Solving', 'Logical Reasoning', 'IQ'];
 
 export default function QuestionModal({ question, onClose }) {
   const dispatch = useDispatch();
   const [form, setForm] = useState(question ? {
-    ...question, tags: question.tags?.join(', ') || ''
+    ...question, tags: question.tags?.join(', ') || '',
+    options: question.options || []
   } : defaultForm);
   const [saving, setSaving] = useState(false);
 
-  const set = (field, val) => setForm(prev => ({ ...prev, [field]: val }));
+  const set = (field, val) => setForm(prev => {
+    const next = { ...prev, [field]: val };
+    if (field === 'type') {
+      if (val === 'problem-solving') {
+        next.category = 'Problem Solving';
+        next.options = [];
+      } else if (prev.type === 'problem-solving') {
+        next.options = ['', '', '', ''];
+        next.correctAnswer = '';
+        if (next.category === 'Problem Solving') {
+          next.category = 'React.js';
+        }
+      }
+    }
+    if (field === 'category') {
+      if (val === 'Problem Solving') {
+        next.type = 'problem-solving';
+        next.options = [];
+      } else if (prev.category === 'Problem Solving') {
+        next.type = 'mcq';
+        next.options = ['', '', '', ''];
+        next.correctAnswer = '';
+      }
+    }
+    return next;
+  });
+
   const setOption = (i, val) => setForm(prev => {
     const opts = [...prev.options];
     opts[i] = val;
@@ -44,10 +71,12 @@ export default function QuestionModal({ question, onClose }) {
     });
   };
 
+  const isPS = form.type === 'problem-solving' || form.category === 'Problem Solving';
+
   return (
     <div className="fixed inset-0 bg-black/50 z-50 overflow-y-auto">
       <div className="min-h-screen flex items-center justify-center p-4">
-        <div className="card w-full max-w-2xl">
+        <div className="card w-full max-w-2xl border-primary-500 border-t-4">
           <div className="card-header flex items-center justify-between">
             <h2 className="font-bold text-gray-900">{question ? 'Edit' : 'Add'} Question</h2>
             <button onClick={onClose} className="p-1 rounded-lg hover:bg-gray-100 text-gray-500"><X className="w-5 h-5" /></button>
@@ -59,21 +88,31 @@ export default function QuestionModal({ question, onClose }) {
                 onChange={e => set('question', e.target.value)} placeholder="Enter the question..." />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Options * (4 required)</label>
-              {form.options.map((opt, i) => (
-                <input key={i} required className="input mb-2" placeholder={`Option ${String.fromCharCode(65 + i)}`}
-                  value={opt} onChange={e => setOption(i, e.target.value)} />
-              ))}
-            </div>
+            {!isPS ? (
+              <>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Options * (4 required)</label>
+                  {form.options.map((opt, i) => (
+                    <input key={i} required={!isPS} className="input mb-2" placeholder={`Option ${String.fromCharCode(65 + i)}`}
+                      value={opt} onChange={e => setOption(i, e.target.value)} />
+                  ))}
+                </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Correct Answer *</label>
-              <select required className="input" value={form.correctAnswer} onChange={e => set('correctAnswer', e.target.value)}>
-                <option value="">Select correct option</option>
-                {form.options.filter(Boolean).map((opt, i) => <option key={i} value={opt}>{opt.slice(0, 60)}</option>)}
-              </select>
-            </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Correct Answer *</label>
+                  <select required={!isPS} className="input" value={form.correctAnswer} onChange={e => set('correctAnswer', e.target.value)}>
+                    <option value="">Select correct option</option>
+                    {form.options.filter(Boolean).map((opt, i) => <option key={i} value={opt}>{opt.slice(0, 60)}</option>)}
+                  </select>
+                </div>
+              </>
+            ) : (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Model Answer (correctAnswer) *</label>
+                <textarea required={isPS} rows={4} className="input resize-none font-mono text-sm" placeholder="Enter the model answer / expected criteria..."
+                  value={form.correctAnswer} onChange={e => set('correctAnswer', e.target.value)} />
+              </div>
+            )}
 
             <div className="grid grid-cols-2 gap-3">
               <div>

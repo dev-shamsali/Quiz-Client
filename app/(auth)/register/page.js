@@ -89,13 +89,15 @@ export default function RegisterPage() {
             <div>
               <label className="block text-xs font-bold uppercase tracking-widest mb-2">Full Name</label>
               <input type="text" required className="input" placeholder="Your full name"
-                value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+                value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
+                suppressHydrationWarning />
             </div>
             <div>
               <label className="block text-xs font-bold uppercase tracking-widest mb-2">Email Address</label>
               <input type="email" required autoComplete="email" className="input"
                 placeholder="you@example.com" value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })} />
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                suppressHydrationWarning />
             </div>
 
             <div className="p-4 border border-black/20 bg-cream-dark">
@@ -105,7 +107,7 @@ export default function RegisterPage() {
             </div>
 
             <motion.button type="submit" disabled={loading} whileTap={{ scale: 0.97 }}
-              className="btn-primary w-full py-3 text-base">
+              className="btn-primary w-full py-3 text-base" suppressHydrationWarning>
               {loading
                 ? <><Loader2 size={16} className="animate-spin" /> Creating account…</>
                 : <><span>Register & Send Credentials</span><ArrowRight size={16} /></>}
