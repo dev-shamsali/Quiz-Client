@@ -12,7 +12,7 @@ const defaultForm = {
   realWorldUseCase: '', tags: '',
 };
 
-const CATEGORIES = ['React.js', 'Next.js', 'Node.js', 'Express.js', 'MongoDB', 'Problem Solving', 'Logical Reasoning', 'IQ'];
+const CATEGORIES = ['React.js', 'Next.js', 'Node.js', 'Express.js', 'MongoDB',  'Logical Reasoning', 'IQ'];
 
 export default function QuestionModal({ question, onClose }) {
   const dispatch = useDispatch();
@@ -129,7 +129,6 @@ export default function QuestionModal({ question, onClose }) {
                   <option value="mcq">MCQ</option>
                   <option value="debugging">Debugging</option>
                   <option value="scenario">Scenario</option>
-                  <option value="problem-solving">Problem Solving</option>
                 </select>
               </div>
             </div>

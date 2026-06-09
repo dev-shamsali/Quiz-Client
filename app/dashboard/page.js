@@ -13,67 +13,67 @@ const SYLLABUS = [
     category: 'React.js',
     color: 'border-blue-700 bg-blue-50 text-blue-900',
     dot: 'bg-blue-700',
-    sectionLabel: 'Section 1 — React & Next JS · 36 min',
+    sectionLabel: 'Section 1 - React & Next JS · 36 min',
     topics: ['JSX & Virtual DOM', 'Hooks (useState, useEffect, useRef, useMemo, useCallback)', 'Component Lifecycle', 'Props & State Management', 'Context API', 'React Router', 'Performance Optimisation', 'Error Boundaries', 'Code Splitting & Lazy Loading'],
   },
   {
     category: 'Next.js',
     color: 'border-gray-700 bg-gray-50 text-gray-900',
     dot: 'bg-gray-700',
-    sectionLabel: 'Section 1 — React & Next JS · 36 min',
+    sectionLabel: 'Section 1 - React & Next JS · 36 min',
     topics: ['App Router & Pages Router', 'Server & Client Components', 'Static Generation (SSG)', 'Server-Side Rendering (SSR)', 'Incremental Static Regeneration (ISR)', 'API Routes', 'Middleware & Edge Functions', 'Image Optimisation', 'Metadata & SEO'],
   },
   {
     category: 'Node.js',
     color: 'border-green-700 bg-green-50 text-green-900',
     dot: 'bg-green-700',
-    sectionLabel: 'Section 2 — NodeJS · 36 min',
+    sectionLabel: 'Section 2 - NodeJS · 36 min',
     topics: ['Event Loop & Non-blocking I/O', 'Modules (CommonJS & ESM)', 'File System (fs module)', 'Streams & Buffers', 'Async/Await & Promises', 'Child Processes & Worker Threads', 'Cluster & Scaling', 'npm & package.json', 'Environment Variables'],
   },
   {
     category: 'Express.js',
     color: 'border-yellow-700 bg-yellow-50 text-yellow-900',
     dot: 'bg-yellow-700',
-    sectionLabel: 'Section 3 — Express JS · 36 min',
+    sectionLabel: 'Section 3 - Express JS · 36 min',
     topics: ['Routing & Route Parameters', 'Middleware Pipeline', 'Request & Response Handling', 'Error Handling Middleware', 'REST API Design', 'CORS Configuration', 'API Versioning', 'Rate Limiting', 'Request Validation'],
   },
-  {
-    category: 'Problem Solving',
-    color: 'border-purple-700 bg-purple-50 text-purple-900',
-    dot: 'bg-purple-700',
-    sectionLabel: 'Section 3 — Express JS · 36 min',
-    topics: ['Array & Object Manipulation', 'Recursion & Memoization', 'Closures & Scope', 'Prototype Chain', 'Event Delegation', 'Debounce & Throttle', 'Sorting & Searching Algorithms', 'Data Structures (Linked List, Tree)', 'Time & Space Complexity'],
-  },
+  // {
+  //   category: 'Problem Solving',
+  //   color: 'border-purple-700 bg-purple-50 text-purple-900',
+  //   dot: 'bg-purple-700',
+  //   sectionLabel: 'Section 3 - Express JS · 36 min',
+  //   topics: ['Array & Object Manipulation', 'Recursion & Memoization', 'Closures & Scope', 'Prototype Chain', 'Event Delegation', 'Debounce & Throttle', 'Sorting & Searching Algorithms', 'Data Structures (Linked List, Tree)', 'Time & Space Complexity'],
+  // },
   {
     category: 'MongoDB',
     color: 'border-emerald-700 bg-emerald-50 text-emerald-900',
     dot: 'bg-emerald-700',
-    sectionLabel: 'Section 4 — MongoDB · 36 min',
+    sectionLabel: 'Section 4 - MongoDB · 36 min',
     topics: ['CRUD Operations', 'Mongoose Schemas & Models', 'Aggregation Pipeline', 'Indexing & Performance', 'Schema Design Patterns', 'Relationships & Populate', 'Transactions', 'Replica Sets', 'Atlas & Cloud Deployment'],
   },
   {
-    category: 'Logical Reasoning',
+    category: '(Problem Solving)Logical Reasoning & IQ',
     color: 'border-indigo-700 bg-indigo-50 text-indigo-900',
     dot: 'bg-indigo-700',
-    sectionLabel: 'Section 5 — Logical Reasoning & IQ · 36 min',
-    topics: ['Pattern Recognition', 'Syllogisms & Verbal Logic', 'Analytical Reasoning', 'Data Sufficiency', 'Logical Deduction'],
+    sectionLabel: 'Section 5 - Logical Reasoning & IQ · 36 min',
+    topics: ['Pattern Recognition', 'Syllogisms & Verbal Logic', 'Analytical Reasoning', 'Data Sufficiency', 'Logical Deduction', 'Mathematical Puzzles', 'Sequence Completion', 'Spatial Visualization'],
   },
-  {
-    category: 'IQ',
-    color: 'border-pink-700 bg-pink-50 text-pink-900',
-    dot: 'bg-pink-700',
-    sectionLabel: 'Section 5 — Logical Reasoning & IQ · 36 min',
-    topics: ['Mathematical Puzzles', 'Sequence Completion', 'Spatial Visualization', 'Analogies & Association', 'Quantitative Aptitude'],
-  },
+  // {
+  //   category: 'IQ',
+  //   color: 'border-pink-700 bg-pink-50 text-pink-900',
+  //   dot: 'bg-pink-700',
+  //   sectionLabel: 'Section 5 - Logical Reasoning & IQ · 36 min',
+  //   topics: ['Mathematical Puzzles', 'Sequence Completion', 'Spatial Visualization', 'Analogies & Association', 'Quantitative Aptitude'],
+  // },
 ];
 
 // Section summary cards shown above the syllabus
 const SECTION_SUMMARY = [
-  { label: 'React & Next JS',                      duration: '36 min', color: 'border-blue-700 bg-blue-50 text-blue-900',      dot: 'bg-blue-700'   },
-  { label: 'NodeJS',                               duration: '36 min', color: 'border-gray-700 bg-gray-50 text-gray-900',      dot: 'bg-gray-700'   },
-  { label: 'Express JS',                           duration: '36 min', color: 'border-green-700 bg-green-50 text-green-900',   dot: 'bg-green-700'  },
-  { label: 'MongoDB',                              duration: '36 min', color: 'border-emerald-700 bg-emerald-50 text-emerald-900', dot: 'bg-emerald-700' },
-  { label: 'Logical Reasoning & IQ',               duration: '36 min', color: 'border-purple-700 bg-purple-50 text-purple-900', dot: 'bg-purple-700' },
+  { label: 'React & Next JS', duration: '36 min', color: 'border-blue-700 bg-blue-50 text-blue-900', dot: 'bg-blue-700' },
+  { label: 'NodeJS', duration: '36 min', color: 'border-gray-700 bg-gray-50 text-gray-900', dot: 'bg-gray-700' },
+  { label: 'Express JS', duration: '36 min', color: 'border-green-700 bg-green-50 text-green-900', dot: 'bg-green-700' },
+  { label: 'MongoDB', duration: '36 min', color: 'border-emerald-700 bg-emerald-50 text-emerald-900', dot: 'bg-emerald-700' },
+  { label: 'Logical Reasoning & IQ', duration: '36 min', color: 'border-purple-700 bg-purple-50 text-purple-900', dot: 'bg-purple-700' },
 ];
 
 const gradeStyle = {
@@ -98,7 +98,16 @@ export default function DashboardPage() {
 
   const [expanded, setExpanded] = useState(null);
   const quizDateTime = settings?.quizDateTime ? new Date(settings.quizDateTime) : null;
-  const quizOpen     = settings?.quizAllowed;
+
+  const isToday = (date) => {
+    if (!date) return true;
+    const today = new Date();
+    return date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear();
+  };
+
+  const quizOpen = settings?.quizAllowed && isToday(quizDateTime);
 
   return (
     <DashboardLayout>
@@ -112,9 +121,9 @@ export default function DashboardPage() {
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
           className="grid grid-cols-3 gap-2 sm:gap-4 mb-6 sm:mb-8">
           {[
-            { icon: Target, label: 'Total Attempts',  value: user?.totalAttempts ?? 0 },
-            { icon: Award,  label: 'Average Score',   value: `${user?.averageScore ?? 0}%` },
-            { icon: Clock,  label: 'Last Attempt',    value: attempts[0] ? new Date(attempts[0].createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : '—' },
+            { icon: Target, label: 'Total Attempts', value: user?.totalAttempts ?? 0 },
+            { icon: Award, label: 'Average Score', value: `${user?.averageScore ?? 0}%` },
+            { icon: Clock, label: 'Last Attempt', value: attempts[0] ? new Date(attempts[0].createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : '-' },
           ].map(({ icon: Icon, label, value }) => (
             <div key={label} className="card-sm p-3 sm:p-5">
               <Icon size={14} className="mb-2 sm:mb-3 text-ink-light" />

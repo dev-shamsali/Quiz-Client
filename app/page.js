@@ -111,7 +111,7 @@ export default function HomePage() {
       </motion.section>
 
       <footer className="border-t-2 border-ink py-6 text-center text-ink-light text-sm">
-        © 2025 Alliance Quiz AI — Professional Assessment Platform
+        © 2025 Alliance Quiz AI - Professional Assessment Platform
       </footer>
     </div>
   );

@@ -3,7 +3,7 @@ import Providers from './providers';
 import { Toaster } from 'react-hot-toast';
 
 export const metadata = {
-  title: 'Alliance Quiz AI — Professional Assessment Platform',
+  title: 'Alliance Quiz AI - Professional Assessment Platform',
   description: 'AI-powered proctored quiz assessment platform with detailed performance reports.',
 };
 

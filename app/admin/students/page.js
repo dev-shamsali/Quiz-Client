@@ -101,10 +101,10 @@ export default function StudentsPage() {
                               className={`btn btn-xs text-xs font-bold py-1.5 px-3 rounded-lg border transition-all ${
                                 s.activeAttempt.adminAllowedResume
                                   ? 'border-gray-300 text-gray-700 bg-white hover:bg-gray-50'
-                                  : 'border-primary-600 bg-primary-600 hover:bg-primary-700 text-white'
+                                  : 'border-black bg-black text-white hover:bg-ink-soft'
                               }`}
                             >
-                              {s.activeAttempt.adminAllowedResume ? 'Revoke Resume' : 'Allow Resume'}
+                              {s.activeAttempt.adminAllowedResume ? 'Resume Allowed' : 'Allow Resume'}
                             </button>
                           )}
                         </div>

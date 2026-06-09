@@ -158,121 +158,141 @@ export default function ResultsPage() {
         {/* Question Review */}
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="card mb-6">
           <div className="card-header"><h3 className="font-bold">Answer Review</h3></div>
-          {attempt.questions?.map((q, i) => {
-            const isPS          = q.category === 'Problem Solving' || q.question?.category === 'Problem Solving' || q.question?.type === 'problem-solving';
-            const writtenAnswer = (q.description || '').trim();
-            const wasAnswered   = isPS ? !!writtenAnswer : !!q.selectedAnswer;
+          {(() => {
+            const isTerminated = attempt.status !== 'completed';
+            const list = (attempt.questions || [])
+              .map((q, idx) => ({ ...q, originalIndex: idx }))
+              .filter((q) => {
+                if (!isTerminated) return true;
+                const isPS = q.category === 'Problem Solving' || q.question?.category === 'Problem Solving' || q.question?.type === 'problem-solving';
+                const writtenAnswer = (q.description || '').trim();
+                return isPS ? !!writtenAnswer : !!q.selectedAnswer;
+              });
 
-            return (
-              <div key={i} className="px-6 py-4 border-b border-ink/10 last:border-0">
-                <div className="flex items-start gap-3">
+            if (list.length === 0) {
+              return (
+                <div className="p-8 text-center text-sm text-ink-muted leading-relaxed">
+                  No questions were answered during this attempt.
+                </div>
+              );
+            }
 
-                  {/* Left icon */}
-                  <div className={`mt-0.5 flex-shrink-0 ${
-                    !wasAnswered ? 'text-gray-400'
-                    : q.isCorrect ? 'text-green-700'
-                    : 'text-red-700'}`}>
-                    {q.isCorrect
-                      ? <CheckCircle2 size={17} />
-                      : <XCircle size={17} />}
-                  </div>
+            return list.map((q) => {
+              const isPS          = q.category === 'Problem Solving' || q.question?.category === 'Problem Solving' || q.question?.type === 'problem-solving';
+              const writtenAnswer = (q.description || '').trim();
+              const wasAnswered   = isPS ? !!writtenAnswer : !!q.selectedAnswer;
 
-                  <div className="flex-1 min-w-0">
-                    {/* Badges */}
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <span className="text-xs text-ink-light">Q{i + 1}</span>
-                      <span className={`badge badge-${q.difficulty}`}>{q.difficulty}</span>
-                      {isPS && (
-                        <span className="px-1.5 py-0.5 text-xs font-bold border border-purple-700 text-purple-800 bg-purple-50">
-                          Problem Solving
-                        </span>
-                      )}
+              return (
+                <div key={q.originalIndex} className="px-6 py-4 border-b border-ink/10 last:border-0">
+                  <div className="flex items-start gap-3">
+
+                    {/* Left icon */}
+                    <div className={`mt-0.5 flex-shrink-0 ${
+                      !wasAnswered ? 'text-gray-400'
+                      : q.isCorrect ? 'text-green-700'
+                      : 'text-red-700'}`}>
+                      {q.isCorrect
+                        ? <CheckCircle2 size={17} />
+                        : <XCircle size={17} />}
                     </div>
 
-                    <p className="text-sm font-semibold mb-2">{q.question?.question}</p>
-                    {q.question?.codeSnippet && (
-                      <pre className="code-block text-xs mb-2">{q.question.codeSnippet}</pre>
-                    )}
+                    <div className="flex-1 min-w-0">
+                      {/* Badges */}
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <span className="text-xs text-ink-light">Q{q.originalIndex + 1}</span>
+                        <span className={`badge badge-${q.difficulty}`}>{q.difficulty}</span>
+                        {isPS && (
+                          <span className="px-1.5 py-0.5 text-xs font-bold border border-purple-700 text-purple-800 bg-purple-50">
+                            Problem Solving
+                          </span>
+                        )}
+                      </div>
 
-                    {isPS ? (
-                      /* ── Problem Solving ── */
-                      <div className="mb-2 space-y-2">
+                      <p className="text-sm font-semibold mb-2">{q.question?.question}</p>
+                      {q.question?.codeSnippet && (
+                        <pre className="code-block text-xs mb-2">{q.question.codeSnippet}</pre>
+                      )}
 
-                        {!wasAnswered ? (
-                          /* UNANSWERED */
-                          <>
-                            <span className="px-2 py-0.5 border border-gray-400 text-gray-600 bg-gray-50 text-xs inline-block">
-                              Unanswered
-                            </span>
-                            {q.correctAnswer && (
-                              <div className="border border-green-700 bg-green-50 px-3 py-2">
-                                <p className="text-xs font-bold text-green-700 mb-1">Correct: {q.correctAnswer}</p>
-                              </div>
-                            )}
-                          </>
-                        ) : q.isCorrect ? (
-                          /* CORRECT */
-                          <div className="border border-green-700 bg-green-50 px-3 py-2">
-                            <p className="text-xs font-bold text-green-700 mb-1 flex items-center gap-1">
-                              <PenLine size={11} /> Your answer: {writtenAnswer}
-                            </p>
-                          </div>
-                        ) : (
-                          /* INCORRECT */
-                          <>
-                            <div className="border border-red-700 bg-red-50 px-3 py-2">
-                              <p className="text-xs font-bold text-red-700 mb-1 flex items-center gap-1">
+                      {isPS ? (
+                        /* ── Problem Solving ── */
+                        <div className="mb-2 space-y-2">
+
+                          {!wasAnswered ? (
+                            /* UNANSWERED */
+                            <>
+                              <span className="px-2 py-0.5 border border-gray-400 text-gray-600 bg-gray-50 text-xs inline-block">
+                                Unanswered
+                              </span>
+                              {q.correctAnswer && (
+                                <div className="border border-green-700 bg-green-50 px-3 py-2">
+                                  <p className="text-xs font-bold text-green-700 mb-1">Correct: {q.correctAnswer}</p>
+                                </div>
+                              )}
+                            </>
+                          ) : q.isCorrect ? (
+                            /* CORRECT */
+                            <div className="border border-green-700 bg-green-50 px-3 py-2">
+                              <p className="text-xs font-bold text-green-700 mb-1 flex items-center gap-1">
                                 <PenLine size={11} /> Your answer: {writtenAnswer}
                               </p>
                             </div>
-                            {q.correctAnswer && (
-                              <div className="border border-green-700 bg-green-50 px-3 py-2">
-                                <p className="text-xs font-bold text-green-700 mb-1">Correct: {q.correctAnswer}</p>
+                          ) : (
+                            /* INCORRECT */
+                            <>
+                              <div className="border border-red-700 bg-red-50 px-3 py-2">
+                                <p className="text-xs font-bold text-red-700 mb-1 flex items-center gap-1">
+                                  <PenLine size={11} /> Your answer: {writtenAnswer}
+                                </p>
                               </div>
-                            )}
-                          </>
-                        )}
+                              {q.correctAnswer && (
+                                <div className="border border-green-700 bg-green-50 px-3 py-2">
+                                  <p className="text-xs font-bold text-green-700 mb-1">Correct: {q.correctAnswer}</p>
+                                </div>
+                              )}
+                            </>
+                          )}
 
-                      </div>
-                    ) : (
-                      /* ── MCQ ── */
-                      <div className="flex flex-col gap-2 mb-2 items-start max-w-full">
-                        {q.selectedAnswer
-                          ? <div className={`px-2 py-1 border text-xs max-w-full break-words ${
-                              q.isCorrect
-                                ? 'border-green-700 text-green-800 bg-green-50'
-                                : 'border-red-700 text-red-800 bg-red-50'}`}>
-                              Your answer: {q.selectedAnswer}
+                        </div>
+                      ) : (
+                        /* ── MCQ ── */
+                        <div className="flex flex-col gap-2 mb-2 items-start max-w-full">
+                          {q.selectedAnswer
+                            ? <div className={`px-2 py-1 border text-xs max-w-full break-words ${
+                                q.isCorrect
+                                  ? 'border-green-700 text-green-800 bg-green-50'
+                                  : 'border-red-700 text-red-800 bg-red-50'}`}>
+                                Your answer: {q.selectedAnswer}
+                              </div>
+                            : <div className="px-2 py-1 border border-gray-400 text-gray-600 bg-gray-50 text-xs max-w-full break-words">
+                                Unanswered
+                              </div>}
+                          {!q.isCorrect && (
+                            <div className="px-2 py-1 border border-green-700 text-green-800 bg-green-50 text-xs max-w-full break-words">
+                              Correct: {q.correctAnswer}
                             </div>
-                          : <div className="px-2 py-1 border border-gray-400 text-gray-600 bg-gray-50 text-xs max-w-full break-words">
-                              Unanswered
-                            </div>}
-                        {!q.isCorrect && (
-                          <div className="px-2 py-1 border border-green-700 text-green-800 bg-green-50 text-xs max-w-full break-words">
-                            Correct: {q.correctAnswer}
-                          </div>
-                        )}
-                      </div>
-                    )}
+                          )}
+                        </div>
+                      )}
 
-                    {/* Explanation */}
-                    <button
-                      onClick={() => setExpanded((p) => ({ ...p, [i]: !p[i] }))}
-                      className="text-xs font-bold text-ink-muted hover:text-ink flex items-center gap-1">
-                      {expanded[i]
-                        ? <><ChevronUp size={11} />Hide</>
-                        : <><ChevronDown size={11} />Explanation</>}
-                    </button>
-                    {expanded[i] && (
-                      <p className="text-xs text-ink-muted mt-2 p-3 bg-cream-dark border border-ink/10 leading-relaxed">
-                        {q.question?.explanation}
-                      </p>
-                    )}
+                      {/* Explanation */}
+                      <button
+                        onClick={() => setExpanded((p) => ({ ...p, [q.originalIndex]: !p[q.originalIndex] }))}
+                        className="text-xs font-bold text-ink-muted hover:text-ink flex items-center gap-1">
+                        {expanded[q.originalIndex]
+                          ? <><ChevronUp size={11} />Hide</>
+                          : <><ChevronDown size={11} />Explanation</>}
+                      </button>
+                      {expanded[q.originalIndex] && (
+                        <p className="text-xs text-ink-muted mt-2 p-3 bg-cream-dark border border-ink/10 leading-relaxed">
+                          {q.question?.explanation}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            });
+          })()}
         </motion.div>
 
         <div className="flex gap-4">

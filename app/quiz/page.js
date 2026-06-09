@@ -406,7 +406,7 @@ export default function QuizPage() {
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold mb-3">Ready to Begin?</h1>
             <p className="text-ink-muted mb-6 leading-relaxed max-w-md mx-auto">
-              200 randomised questions across 5 timed sections — 3 hours total.
+              200 randomised questions across 5 timed sections - 3 hours total.
               Each section unlocks when the previous timer expires or when you complete it early.
             </p>
             <div className="mb-6 text-left border border-ink/10 divide-y divide-ink/10">
@@ -433,7 +433,7 @@ export default function QuizPage() {
             </div>
 
             <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-6 sm:mb-8">
-              {[['⏱', '3 Hours', 'Total Time'], ['📝', '300 Q', 'Questions'], ['🔒', 'Strict', 'Proctored']].map(([e, v, l]) => (
+              {[['⏱', '3 Hours', 'Total Time'], ['📝', '200 Q', 'Questions'], ['🔒', 'Strict', 'Proctored']].map(([e, v, l]) => (
                 <div key={l} className="card-sm p-3 sm:p-5 text-center">
                   <div className="text-2xl mb-2">{e}</div>
                   <p className="font-black">{v}</p>
@@ -447,9 +447,9 @@ export default function QuizPage() {
                 <ShieldAlert size={12} /> Strict Proctoring Active
               </p>
               <ul className="text-xs text-red-700 leading-relaxed space-y-1">
-                <li>• Each section is <strong>timed</strong> — next section opens when the timer expires or when you complete it early</li>
+                <li>• Each section is <strong>timed</strong> - next section opens when the timer expires or when you complete it early</li>
                 <li>• Once a section's timer expires, it is locked and you <strong>cannot go back</strong></li>
-                <li>• Quiz runs in <strong>fullscreen</strong> — exiting fullscreen immediately submits</li>
+                <li>• Quiz runs in <strong>fullscreen</strong> - exiting fullscreen immediately submits</li>
                 <li>• Switching tabs or minimising will <strong>auto-submit</strong> your quiz</li>
                 <li>• Violations are flagged and included in your AI performance report</li>
               </ul>
@@ -458,7 +458,7 @@ export default function QuizPage() {
             <motion.button onClick={handleStart} disabled={loading} whileTap={{ scale: 0.97 }}
               className="btn-primary btn-lg px-10 w-full flex items-center justify-center gap-2">
               <Maximize size={16} />
-              {loading ? 'Loading questions…' : 'I Understand — Start Quiz'}
+              {loading ? 'Loading questions…' : 'I Understand - Start Quiz'}
             </motion.button>
           </div>
         </motion.div>
@@ -478,7 +478,27 @@ export default function QuizPage() {
   }
 
   const question = questions[currentIndex];
-  if (!question) return null;
+  if (!question) {
+    if (started && questions.length === 0) {
+      return (
+        <QuizLayout>
+          <div className="max-w-md mx-auto py-16 px-4 text-center">
+            <div className="card p-8 border-2 border-red-700 bg-red-50" style={{ borderColor: '#b91c1c' }}>
+              <ShieldAlert size={48} className="mx-auto mb-4 text-red-700" />
+              <h2 className="text-xl font-bold text-red-800 mb-2">No Questions Found</h2>
+              <p className="text-sm text-red-700 mb-6">
+                This quiz attempt has no questions assigned to it. Please contact the administrator.
+              </p>
+              <button onClick={() => router.replace('/dashboard')} className="btn-primary inline-block py-2 px-6">
+                Back to Dashboard
+              </button>
+            </div>
+          </div>
+        </QuizLayout>
+      );
+    }
+    return null;
+  }
 
   const isProblemSolving = question.category === 'Problem Solving';
   const questionId = toIdString(question._id);

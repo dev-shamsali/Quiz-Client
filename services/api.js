@@ -53,13 +53,10 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const refreshToken = Cookies.get('refreshToken');
-        if (!refreshToken) throw new Error('No refresh token');
-
         // Use plain axios here (not api) to avoid interceptor loop
         const res = await axios.post(
           `${API_BASE}/auth/refresh`,
-          { refreshToken },
+          {},
           { withCredentials: true }
         );
         const { accessToken, refreshToken: newRefresh } = res.data?.data ?? res.data;
